@@ -1,18 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Define custom CSS variables if needed */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --font-family-base: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --line-height-base: 1.5;
+  --font-weight-base: 400;
+  font-family: var(--font-family-base);
+  line-height: var(--line-height-base);
+  font-weight: var(--font-weight-base);
+  
+  /* You can define variables for colors if you wish, 
+     but for now we let Tailwind handle the colors on elements. */
 }
 
+/* Set the global background and text colors on the html element 
+   so that when the .dark class is added, they change accordingly.
+*/
+html {
+  background-color: #ffffff;
+  color: #213547;
+}
+html.dark {
+  background-color: #242424;
+  /* This will give you light-colored text when dark mode is active */
+  color: rgba(255, 255, 255, 0.87);
+}
+
+/* Global element styles */
 a {
   font-weight: 500;
   color: #646cff;
@@ -54,10 +70,12 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Optional: Remove or adjust this media query if you're
+   controlling dark mode solely via the "dark" class */
 @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
+  html {
     background-color: #ffffff;
+    color: #213547;
   }
   a:hover {
     color: #747bff;

@@ -22,18 +22,21 @@ export default function MainLayout() {
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       <header className="bg-blue-600 dark:bg-blue-900 text-white py-4">
-        <nav className="container mx-auto flex justify-between items-center px-4">
-          <div>
-            <Link to="/" className="mr-4 hover:text-gray-200">Home</Link>
-            <Link to="/about" className="hover:text-gray-200">About</Link>
-          </div>
-          <button
-            onClick={() => setDark(!dark)}
-            className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 py-1 px-3 rounded transition-colors duration-300"
-          >
-            {dark ? 'Light Mode' : 'Dark Mode'}
-          </button>
-        </nav>
+      <nav className="container mx-auto flex justify-between items-center px-4">
+  <div>
+    <Link to="/" className="mr-4 hover:text-gray-200">Home</Link>
+    <Link to="/about" className="mr-4 hover:text-gray-200">About</Link>
+    <Link to="/resources" className="hover:text-gray-200">Resources</Link>
+    <Link to="/contact" className="hover:text-gray-200">Contact</Link>
+  </div>
+  <button
+    onClick={() => setDark(!dark)}
+    className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 py-1 px-3 rounded transition-colors duration-300"
+  >
+    {dark ? 'Light Mode' : 'Dark Mode'}
+  </button>
+</nav>
+
       </header>
 
       <main className="flex-grow container mx-auto p-4">

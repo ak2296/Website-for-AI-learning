@@ -1,20 +1,29 @@
+// src/App.tsx
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import About from './pages/About';
+import Resources from './pages/Resources';
+import Contact from './pages/Contact';
 
 function App() {
+  const location = useLocation();
+
   return (
-    <Routes>
-      {/* Wrap your routes using MainLayout */}
-      <Route path="/" element={<MainLayout />}>
-        {/* Default (index) route */}
-        <Route index element={<Home />} />
-        {/* The /about route */}
-        <Route path="about" element={<About />} />
-      </Route>
-    </Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="about" element={<About />} />
+          <Route path="resources" element={<Resources />} />
+          <Route path="contact" element={<Contact />} />
+          {/* A fallback for unmatched routes */}
+          <Route path="*" element={<div>Page not found</div>} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
   );
 }
 

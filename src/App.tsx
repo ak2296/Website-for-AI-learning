@@ -1,18 +1,20 @@
-import { Routes, Route, Link } from 'react-router-dom';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import About from './pages/About';
 
 function App() {
   return (
-    <div>
-      <nav>
-        <Link to="/">Home</Link> | <Link to="/about">About</Link>
-      </nav>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
-    </div>
+    <Routes>
+      {/* Wrap your routes using MainLayout */}
+      <Route path="/" element={<MainLayout />}>
+        {/* Default (index) route */}
+        <Route index element={<Home />} />
+        {/* The /about route */}
+        <Route path="about" element={<About />} />
+      </Route>
+    </Routes>
   );
 }
 

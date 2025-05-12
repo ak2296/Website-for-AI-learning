@@ -1,17 +1,18 @@
 // src/pages/Home.tsx
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Typography } from "@mui/material";
 
 export default function Home() {
+  const { t } = useTranslation();
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      transition={{ duration: 0.5 }}
-    >
-      <h1>Welcome to Your AI Learning Platform</h1>
-      <p>This is the home page.</p>
-    </motion.div>
+    <div>
+      <Typography variant="h3" gutterBottom>
+        {t('home')} {/* This displays "Home" or "Hem" depending on the language */}
+      </Typography>
+      <Typography variant="body1">
+        {t('welcome')}
+      </Typography>
+    </div>
   );
 }

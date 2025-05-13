@@ -57,14 +57,13 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
           minHeight: "100vh",
         }}
       >
-        <AppBar position="static"
-         sx={{
-          backgroundColor:
-            mode === "dark"
-              ? "rgba(0, 0, 0, 0.8)" // Dark mode header color
-              : muiTheme.palette.primary.main, // Light mode header color
-          color: "white", // Adjust text color
-        }}
+        <AppBar
+          position="static"
+          sx={{
+            backgroundColor: muiTheme.palette.header.main,
+            color: muiTheme.palette.primary.contrastText,
+            paddingBottom: 0,
+          }}
         >
           {isMobile ? (
             <Toolbar
@@ -145,6 +144,7 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                     to={link.path}
                     sx={{
                       mx: 1,
+                      px: 1,
                       fontSize: "1.1rem",
                       textTransform: "none",
                       color: "white",
@@ -176,22 +176,18 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                     gap: 1,
                   }}
                 >
-                  <IconButton color="inherit" onClick={toggleMode}>
+                  <IconButton color="inherit" onClick={toggleMode} 
+                  sx={{
+                    px: 1, // Adjust horizontal padding
+                    borderRadius: "50%", // Optional: Add rounded corners
+                    transition: "background-color 0.3s", // Smooth transition for hover effect
+                    "&:hover": {
+                    backgroundColor: mode === "dark" ? "rgba(255, 255, 255, 0.2)" : muiTheme.palette.primary.light, // Hover color for DM and BM
+                    },
+                  }}>
                     {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
                   </IconButton>
-                  <LanguageSwitcher
-                    sx={{
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        border: "none",
-                      },
-                      "&:hover": {
-                        backgroundColor:
-                          mode === "dark"
-                            ? "rgba(255, 255, 255, 0.1)"
-                            : "rgba(0, 0, 0, 0.1)",
-                      },
-                    }}
-                  />
+                  <LanguageSwitcher mode={mode} sx={{ px: 0, py: 0 }} />
                 </Box>
               </Box>
             </Toolbar>
@@ -232,21 +228,15 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                   gap: 2,
                 }}
               >
-                <LanguageSwitcher
-                  sx={{
-                    color: mode === "dark" ? "white" : "black",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      border: "none",
-                    },
+                <LanguageSwitcher drawer mode={mode} />
+                <IconButton color="inherit" onClick={toggleMode}
+                  sx={{ pd: 1,
+                  
+                    transition: "background-color 0.3s", // Smooth transition for hover effect
                     "&:hover": {
-                      backgroundColor:
-                        mode === "dark"
-                          ? "rgba(255, 255, 255, 0.1)"
-                          : "rgba(0, 0, 0, 0.05)",
+                      backgroundColor: mode === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)", // Hover color for DM and BM
                     },
-                  }}
-                />
-                <IconButton color="inherit" onClick={toggleMode}>
+                   }}>
                   {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
                 </IconButton>
               </Box>
@@ -265,65 +255,54 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
         </Box>
 
         <Paper
-  component="footer"
-  square
-  elevation={3}
-  sx={{
-    textAlign: "center",
-    py: 3,
-    bgcolor:
-      mode === "dark"
-        ? "rgba(0, 0, 0, 0.8)" // Dark mode footer color
-        : muiTheme.palette.primary.main, // Light mode footer color
-    color: "white", // Adjust text color
-  }}
->
-  <Typography variant="body1" sx={{ mb: 1 }}>
-    © 2025 {t("yourWebsite")}
-  </Typography>
-  <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-    {/* Facebook Icon */}
-    <IconButton
-      component="a"
-      href="https://facebook.com"
-      target="_blank"
-      sx={{ color: "white" }}
-    >
-      <FacebookIcon />
-    </IconButton>
-
-    
-    {/* Instagram Icon */}
-    <IconButton
-      component="a"
-      href="https://instagram.com"
-      target="_blank"
-      sx={{ color: "white" }}
-    >
-      <InstagramIcon />
-    </IconButton>
-
-    {/* YouTube Icon */}
-    <IconButton
-      component="a"
-      href="https://youtube.com"
-      target="_blank"
-      sx={{ color: "white" }}
-    >
-      <YouTubeIcon />
-    </IconButton>
-
-    {/* LinkedIn Icon */}
-    <IconButton
-      component="a"
-      href="https://linkedin.com"
-      target="_blank"
-      sx={{ color: "white" }}
-    >
-      <LinkedInIcon />
-    </IconButton>
-  </Box>
-</Paper>
+          component="footer"
+          square
+          elevation={3}
+          sx={{
+            textAlign: "center",
+            py: 3,
+            bgcolor: muiTheme.palette.footer.main,
+            color: muiTheme.palette.primary.contrastText,
+          }}
+        >
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            © 2025 {t("yourWebsite")}
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+            <IconButton
+              component="a"
+              href="https://facebook.com"
+              target="_blank"
+              sx={{ color: "white" }}
+            >
+              <FacebookIcon />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://instagram.com"
+              target="_blank"
+              sx={{ color: "white" }}
+            >
+              <InstagramIcon />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://youtube.com"
+              target="_blank"
+              sx={{ color: "white" }}
+            >
+              <YouTubeIcon />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://linkedin.com"
+              target="_blank"
+              sx={{ color: "white" }}
+            >
+              <LinkedInIcon />
+            </IconButton>
+          </Box>
+        </Paper>
       </Box>
     </>
   );

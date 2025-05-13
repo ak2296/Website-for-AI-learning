@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { AnimatePresence } from "framer-motion";
 import ErrorBoundary from "./components/ErrorBoundary";
+import createAppTheme from "./theme"; // Import the dynamic theme creation function
 
 // Import your pages
 import Home from "./pages/Home";
@@ -22,19 +23,7 @@ export default function App() {
     setMode((prev) => (prev === "light" ? "dark" : "light"));
 
   // ----- Create Material UI Theme -----
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode,
-          primary: { main: "#1976d2" },
-          background: {
-            default: mode === "dark" ? "#121212" : "#f0f0f0",
-          },
-        },
-      }),
-    [mode]
-  );
+  const theme = useMemo(() => createAppTheme(mode), [mode]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -55,7 +44,10 @@ export default function App() {
                 </ErrorBoundary>
               }
             />
-            <Route path="/resources/group/:groupId" element={<ResourceDetail />} />
+            <Route
+              path="/resources/group/:groupId"
+              element={<ResourceDetail />}
+            />
             <Route path="contact" element={<Contact />} />
           </Route>
         </Routes>

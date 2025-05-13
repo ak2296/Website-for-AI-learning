@@ -1,24 +1,48 @@
-// src/theme.ts
 import { createTheme } from "@mui/material/styles";
+
+declare module "@mui/material/styles" {
+  interface Palette {
+    header: {
+      main: string;
+    };
+    footer: {
+      main: string;
+    };
+  }
+  interface PaletteOptions {
+    header?: {
+      main: string;
+    };
+    footer?: {
+      main: string;
+    };
+  }
+}
 
 const theme = createTheme({
   palette: {
-    mode: "light", // Default mode, can be dynamically changed
+    mode: "light",
     primary: {
-      main: "#1976d2", // Default primary color (blue)
-      contrastText: "#ffffff", // Ensures readable text on primary backgrounds
+      main: "#1976d2",
+      contrastText: "#ffffff",
     },
     secondary: {
-      main: "#dc004e", // Default secondary color (red-pink)
+      main: "#dc004e",
       contrastText: "#ffffff",
     },
     background: {
-      default: "#f4f4f4", // Light gray for subtle background contrast
-      paper: "#ffffff", // Card/paper elements maintain white backgrounds
+      default: "#f0f0f0",
+      paper: "#ffffff",
     },
     text: {
-      primary: "#212121", // Standard readable text in light mode
-      secondary: "#757575", // Slightly lighter secondary text
+      primary: "#212121",
+      secondary: "#757575",
+    },
+    header: {
+      main: "#1976d2", // Custom header color
+    },
+    footer: {
+      main: "#333333", // Custom footer color
     },
   },
   typography: {
@@ -29,12 +53,12 @@ const theme = createTheme({
     body1: { fontSize: "1rem", fontWeight: 400 },
     body2: { fontSize: "0.875rem", fontWeight: 300 },
     button: {
-      textTransform: "none", // Prevents all-uppercase button text
+      textTransform: "none",
     },
   },
-  spacing: 8, // Base spacing unit (modify as needed)
+  spacing: 8,
   shape: {
-    borderRadius: 8, // Standardized rounded corners for components
+    borderRadius: 8,
   },
   components: {
     MuiButton: {

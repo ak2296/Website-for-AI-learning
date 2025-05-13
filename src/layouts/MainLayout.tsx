@@ -1,5 +1,4 @@
-// src/layouts/MainLayout.tsx
-import React, { useState, useMemo, Fragment } from "react";
+import React from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import {
   AppBar,
@@ -13,307 +12,277 @@ import {
   List,
   ListItemText,
   useMediaQuery,
-  useTheme,
-  Divider
+  Divider,
+  Paper,
 } from "@mui/material";
 import ListItemButton from "@mui/material/ListItemButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Brightness4, Brightness7 } from "@mui/icons-material";
+import { Brightness4, Brightness7, YouTube as YouTubeIcon, Instagram as InstagramIcon } from "@mui/icons-material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../components/LanguageSwitcher";
-import Paper from "@mui/material/Paper";
 
-export default function MainLayout() {
+interface MainLayoutProps {
+  toggleMode: () => void;
+  mode: "light" | "dark";
+}
+
+export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
   const { t } = useTranslation();
   const location = useLocation();
 
-  // ----- Dark/Light Mode State & Toggle -----
-  const [mode, setMode] = useState<"light" | "dark">("light");
-  const toggleMode = () =>
-    setMode((prev) => (prev === "light" ? "dark" : "light"));
-
-  // ----- Create Material UI Theme -----
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode,
-          primary: { main: "#1976d2" }
-        }
-      }),
-    [mode]
-  );
-
-  // ----- Responsive Detection -----
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
 
-  // ----- Drawer (Mobile Navigation) State & Toggle -----
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
   const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
 
-  // ----- Define Navigation Links -----
   const navLinks = [
     { label: t("home"), path: "/" },
     { label: t("about"), path: "/about" },
     { label: t("resources"), path: "/resources" },
-    { label: t("contact"), path: "/contact" }
+    { label: t("contact"), path: "/contact" },
   ];
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <CssBaseline />
-
-      {/* ===================== HEADER SECTION ===================== */}
-      <AppBar position="static">
-        {isMobile ? (
-          // ----- Mobile Header -----
-          // A single-row header with the site name on the left 
-          // and a vertical stack (logo on top, hamburger below) on the right.
-          <Toolbar
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              minHeight: "100px",
-              px: 2,
-              pb: 0 // Override default bottom padding to 0.
-            }}
-          >
-            <Typography variant="h5">{t("yourWebsite")}</Typography>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center"
-              }}
-            >
-              <Box
-                component="img"
-                src="/logo192.png"
-                alt="Logo"
-                sx={{ height: "40px" }}
-              />
-              <IconButton
-                color="inherit"
-                onClick={handleDrawerToggle}
-                sx={{ mt: 1 }}
-              >
-                <MenuIcon />
-              </IconButton>
-            </Box>
-          </Toolbar>
-        ) : (
-          // ----- Desktop Header -----
-          // Three rows within a vertical Toolbar.
-          <Toolbar
-            sx={{
-              flexDirection: "column",
-              alignItems: "stretch",
-              justifyContent: "center",
-              p: 1,
-              pb: 0, // Remove extra bottom padding.
-              minHeight: "220px"
-            }}
-          >
-            {/* Row 1: Site Name & Logo */}
-            <Box
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+        }}
+      >
+        <AppBar position="static"
+         sx={{
+          backgroundColor:
+            mode === "dark"
+              ? "rgba(0, 0, 0, 0.8)" // Dark mode header color
+              : muiTheme.palette.primary.main, // Light mode header color
+          color: "white", // Adjust text color
+        }}
+        >
+          {isMobile ? (
+            <Toolbar
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                px: 3,
-                pb: 1
+                minHeight: "100px",
+                px: 2,
+                pb: 0,
               }}
             >
-              <Typography variant="h4">{t("yourWebsite")}</Typography>
+              <Typography variant="h5">{t("yourWebsite")}</Typography>
               <Box
-                component="img"
-                src="/logo192.png"
-                alt="Logo"
-                sx={{ height: "50px" }}
-              />
-            </Box>
-
-            {/* Row 2: Empty */}
-            <Box sx={{ px: 3, pb: 1 }}></Box>
-
-            {/* Row 3: Navigation Menu + Dark Mode & Language Selector */}
-            <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Box
+                  component="img"
+                  src="/logo192.png"
+                  alt="Logo"
+                  sx={{ height: "40px" }}
+                />
+                <IconButton
+                  color="inherit"
+                  onClick={handleDrawerToggle}
+                  sx={{ mt: 1 }}
+                >
+                  <MenuIcon />
+                </IconButton>
+              </Box>
+            </Toolbar>
+          ) : (
+            <Toolbar
               sx={{
-                display: "flex",
-                alignItems: "center",
+                flexDirection: "column",
+                alignItems: "stretch",
                 justifyContent: "center",
-                position: "relative",
-                px: 3,
-                pb: 0 // Reduced bottom padding so the underline is nearly flush with header's bottom edge.
+                p: 1,
+                pb: 0,
+                minHeight: "220px",
               }}
             >
-              {navLinks.map((link) => (
-                <Button
-                  key={link.path}
-                  component={Link}
-                  to={link.path}
-                  sx={{
-                    mx: 1,
-                    fontSize: "1.1rem",
-                    textTransform: "none",
-                    color: "white",
-                    pb: 0, // Minimal bottom padding for active underline.
-                    // Active indicator: bottom border (change color here as desired).
-                    borderBottom:
-                      location.pathname === link.path
-                        ? "3px solid #ff9800" // Active underline color.
-                        : "3px solid transparent",
-                        borderRadius: "0px",
-                    "&:hover": {
-                      color: "white", // Keep text white on hover.
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  px: 3,
+                  pb: 1,
+                }}
+              >
+                <Typography variant="h4">{t("yourWebsite")}</Typography>
+                <Box
+                  component="img"
+                  src="/logo192.png"
+                  alt="Logo"
+                  sx={{ height: "50px" }}
+                />
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                  px: 3,
+                  pb: 0,
+                }}
+              >
+                {navLinks.map((link) => (
+                  <Button
+                    key={link.path}
+                    component={Link}
+                    to={link.path}
+                    sx={{
+                      mx: 1,
+                      fontSize: "1.1rem",
+                      textTransform: "none",
+                      color: "white",
+                      pb: 0,
                       borderBottom:
                         location.pathname === link.path
                           ? "3px solid #ff9800"
-                          : "3px solid rgba(255,255,255,0.7)",
-                          borderRadius: "0px",
-                    }
+                          : "3px solid transparent",
+                      borderRadius: "0px",
+                      "&:hover": {
+                        color: "white",
+                        borderBottom:
+                          location.pathname === link.path
+                            ? "3px solid #ff9800"
+                            : "3px solid rgba(255,255,255,0.7)",
+                        borderRadius: "0px",
+                      },
+                    }}
+                  >
+                    {link.label}
+                  </Button>
+                ))}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    right: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
                   }}
                 >
-                  {link.label}
-                </Button>
+                  <IconButton color="inherit" onClick={toggleMode}>
+                    {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
+                  </IconButton>
+                  <LanguageSwitcher
+                    sx={{
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        border: "none",
+                      },
+                      "&:hover": {
+                        backgroundColor:
+                          mode === "dark"
+                            ? "rgba(255, 255, 255, 0.1)"
+                            : "rgba(0, 0, 0, 0.1)",
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
+            </Toolbar>
+          )}
+        </AppBar>
+
+        <Drawer anchor="left" open={drawerOpen} onClose={handleDrawerToggle}>
+          <Box sx={{ width: 250, position: "relative", height: "100%" }}>
+            <List sx={{ pt: 8 }}>
+              {navLinks.map((link) => (
+                <ListItemButton
+                  key={link.path}
+                  component={Link}
+                  to={link.path}
+                  onClick={handleDrawerToggle}
+                >
+                  <ListItemText primary={link.label} />
+                </ListItemButton>
               ))}
-              {/* Right-side container: Dark Mode Toggle and Language Selector */}
+            </List>
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                pb: 2,
+              }}
+            >
+              <Divider sx={{ width: "90%", mb: 2 }} />
               <Box
                 sx={{
-                  position: "absolute",
-                  right: 1,
                   display: "flex",
+                  justifyContent: "center",
                   alignItems: "center",
-                  gap: 1 // Gap between the dark mode button and the language selector.
+                  gap: 2,
                 }}
               >
+                <LanguageSwitcher
+                  sx={{
+                    color: mode === "dark" ? "white" : "black",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      border: "none",
+                    },
+                    "&:hover": {
+                      backgroundColor:
+                        mode === "dark"
+                          ? "rgba(255, 255, 255, 0.1)"
+                          : "rgba(0, 0, 0, 0.05)",
+                    },
+                  }}
+                />
                 <IconButton color="inherit" onClick={toggleMode}>
                   {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
                 </IconButton>
-                <LanguageSwitcher
-                sx={{
-                  
-              
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "none", // Completely remove the border
-                  },
-                  "&:hover": {
-                    backgroundColor: mode === "dark"
-                      ? "rgba(255, 255, 255, 0.1)" // Bright hover for dark mode
-                      : "rgba(0, 0, 0, 0.1)", // Dark hover for light mode
-                  },
-                }}
-                 />
               </Box>
             </Box>
-          </Toolbar>
-        )}
-      </AppBar>
+          </Box>
+        </Drawer>
 
-      {/* ===================== DRAWER (MOBILE NAVIGATION) SECTION ===================== */}
-      <Drawer anchor="left" open={drawerOpen} onClose={handleDrawerToggle}>
         <Box
           sx={{
-            width: { xs: "50vw", sm: "40vw" }, // Drawer width set as a percentage of the viewport.
-            height: "100%",
-            display: "flex",
-            flexDirection: "column"
+            flex: 1,
+            overflowY: "auto",
+            paddingBottom: "50px",
           }}
         >
-          {/* Navigation List */}
-          <Box sx={{ flexGrow: 1 }}>
-            <List>
-              {navLinks.map((link) => (
-                <ListItemButton
-                key={link.path}
-                component={Link}
-                to={link.path}
-                onClick={handleDrawerToggle}
-                sx={{
-                  color: mode === "dark" ? "white" : "black", // Keep text color consistent
-                  borderRadius: "8px",
-                  "&:hover": {
-                    backgroundColor: mode === "dark"
-                    ? "rgba(255, 255, 255, 0.1)" // Bright hover for dark mode
-                    : "rgba(0, 0, 0, 0.04)", // Dark hover for light mode
-                    color: "inherit", // **Prevents text color from changing on hover**
-                  }
-                  }}
-              >
-                <ListItemText primary={link.label} />
-              </ListItemButton>
-              
-              ))}
-            </List>
-          </Box>
-
-          {/* Divider Above Bottom Controls */}
-          <Divider />
-
-          {/* Bottom Row in Drawer: Language Selector and Dark Mode Toggle */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-around",
-              px: 2,
-              py: 1
-            }}
-          >
-            <LanguageSwitcher drawer
-             sx={{
-              color: mode === "dark" ? "white" : "black", // Dynamically set text color
-              "& .MuiSelect-select": {
-                color: mode === "dark" ? "white" : "black", // Ensure the selected text is also styled
-              },
-              "& .MuiOutlinedInput-notchedOutline": {
-                border: "none", // Completely remove the border
-              },
-              "&:hover": {
-                backgroundColor: mode === "dark"
-                  ? "rgba(255, 255, 255, 0.1)" // Bright hover for dark mode
-                  : "rgba(0, 0, 0, 0.04)", // Dark hover for light mode
-              },
-            }}
-            />
-            <IconButton color="inherit" onClick={toggleMode}>
-              {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
-            </IconButton>
-          </Box>
+          <Outlet />
         </Box>
-      </Drawer>
 
-      {/* ===================== MAIN CONTENT AREA ===================== */}
-      <Box sx={{ p: 2, minHeight: "calc(100vh - 240px)" }}>
-        <Outlet />
-      </Box>
-
-      {/* ===================== FOOTER SECTION ===================== */}
-<Paper
+        <Paper
   component="footer"
   square
-  elevation={3} // Adds a subtle shadow
+  elevation={3}
   sx={{
     textAlign: "center",
     py: 3,
-    bgcolor: mode === "dark" ? "rgba(0, 0, 0, 0.8)" : theme.palette.primary.main, // Dynamic background color
-    color: mode === "dark" ? "white" : "inherit", // Dynamic text color
-    position: "absolute", // Attach footer to the bottom
-    bottom: 0,
-    left: 0,
-    right: 0,
+    bgcolor:
+      mode === "dark"
+        ? "rgba(0, 0, 0, 0.8)" // Dark mode footer color
+        : muiTheme.palette.primary.main, // Light mode footer color
+    color: "white", // Adjust text color
   }}
-    >
+>
   <Typography variant="body1" sx={{ mb: 1 }}>
     © 2025 {t("yourWebsite")}
   </Typography>
   <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+    {/* Facebook Icon */}
     <IconButton
       component="a"
       href="https://facebook.com"
@@ -322,14 +291,29 @@ export default function MainLayout() {
     >
       <FacebookIcon />
     </IconButton>
+
+    
+    {/* Instagram Icon */}
     <IconButton
       component="a"
-      href="https://twitter.com"
+      href="https://instagram.com"
       target="_blank"
       sx={{ color: "white" }}
     >
-      <TwitterIcon />
+      <InstagramIcon />
     </IconButton>
+
+    {/* YouTube Icon */}
+    <IconButton
+      component="a"
+      href="https://youtube.com"
+      target="_blank"
+      sx={{ color: "white" }}
+    >
+      <YouTubeIcon />
+    </IconButton>
+
+    {/* LinkedIn Icon */}
     <IconButton
       component="a"
       href="https://linkedin.com"
@@ -340,6 +324,7 @@ export default function MainLayout() {
     </IconButton>
   </Box>
 </Paper>
-    </ThemeProvider>
+      </Box>
+    </>
   );
 }

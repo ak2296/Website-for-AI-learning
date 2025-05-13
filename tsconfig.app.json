@@ -6,22 +6,34 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
+  
+    "moduleResolution": "bundler",  // Vite's module resolution mode
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "react-jsx",  // React 17+ JSX transform (recommended for React 18 as well)
 
-    /* Linting */
+    /* Linting and Strict Settings */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Additional Compatibility for Vite + MUI */
+    "types": [
+      "vite/client",  // Vite client types for development
+      "node",         // Node.js types
+      "react",        // React types
+      "react-dom"     // React-DOM types
+    ],
+    "resolveJsonModule": true,  // Allow importing JSON modules (useful for certain cases)
+    "esModuleInterop": true,    // Ensures compatibility with CommonJS modules (useful for MUI)
+    "allowSyntheticDefaultImports": true,  // Allows default imports from non-ES modules
+    "skipDefaultLibCheck": true   // Optional: can help speed up builds
   },
-  "include": ["src"]
+  "include": ["src/**/*"],  // The source code folder
+  "exclude": ["node_modules"]  // Exclude node_modules from compilation
 }

@@ -1,25 +1,65 @@
-// src/App.tsx
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import MainLayout from "./layouts/MainLayout";
+import React, { useState, useMemo } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { AnimatePresence } from "framer-motion";
+import ErrorBoundary from "./components/ErrorBoundary";
 
-// Import your pages (create these if they don't exist)
+// Import your pages
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Resources from "./pages/Resources";
 import Contact from "./pages/Contact";
+import ResourceDetail from "./pages/ResourceDetail";
+import MainLayout from "./layouts/MainLayout";
 
 export default function App() {
+  const location = useLocation();
+
+  // ----- Dark/Light Mode State & Toggle -----
+  const [mode, setMode] = useState<"light" | "dark">("light");
+  const toggleMode = () =>
+    setMode((prev) => (prev === "light" ? "dark" : "light"));
+
+  // ----- Create Material UI Theme -----
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+          primary: { main: "#1976d2" },
+          background: {
+            default: mode === "dark" ? "#121212" : "#f0f0f0",
+          },
+        },
+      }),
+    [mode]
+  );
+
   return (
-    <Routes>
-      {/* Parent route using MainLayout */}
-      <Route path="/" element={<MainLayout />}>
-        {/* Index route renders Home */}
-        <Route index element={<Home />} />
-        <Route path="about" element={<About />} />
-        <Route path="resources" element={<Resources />} />
-        <Route path="contact" element={<Contact />} />
-      </Route>
-    </Routes>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route
+            path="/"
+            element={<MainLayout toggleMode={toggleMode} mode={mode} />}
+          >
+            <Route index element={<Home />} />
+            <Route path="about" element={<About />} />
+            <Route
+              path="resources"
+              element={
+                <ErrorBoundary>
+                  <Resources />
+                </ErrorBoundary>
+              }
+            />
+            <Route path="/resources/group/:groupId" element={<ResourceDetail />} />
+            <Route path="contact" element={<Contact />} />
+          </Route>
+        </Routes>
+      </AnimatePresence>
+    </ThemeProvider>
   );
 }

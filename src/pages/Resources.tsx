@@ -122,7 +122,6 @@ const cardsPerPage = useMemo(
            <Grid item xs={12} sm={6} md={isLargeScreen ? 4 : 3} lg={3} key={resource.id}>
               <Card
                 sx={{
-                 
                   minWidth:{ xs: "90vw", sm: "30vw", md:"18vw",lg:"17vw" },
                   maxWidth: { xs: "90vw", sm: "30vw", md:"18vw",lg:"17vw" }, // Maximum width of the card
                   minHeight: {xs:100, sm: 200, md:300}, // Maximum height of the card
@@ -130,6 +129,7 @@ const cardsPerPage = useMemo(
                   flexDirection: "column",
                   justifyContent: "space-between",
                   overflow: "hidden",
+                  boxShadow: theme.shadows[8], // Added darker shadow
                 }}
               >
                 <CardContent
@@ -154,26 +154,31 @@ const cardsPerPage = useMemo(
                     {resource.title}
                   </Typography>
                 </CardContent>
-                <Button
+                {/* Changed Button to Typography styled as a link */}
+                <Typography
                   component={Link}
                   to={`/resources/group/${activeStep}`}
-                  variant="outlined"
-                  size="small"
+                  variant="body2" // Use a body variant for text
                   sx={{
                     alignSelf: "flex-start",
                     ml: 2,
                     mb: 2,
+                    color: theme.palette.primary.main, // Use primary color for link
+                    textDecoration: "none", // Add underline
+                    cursor: "pointer", // Indicate it's clickable
+                    "&:hover": {
+                      color: theme.palette.primary.dark, // Darken color on hover
+                    },
                     ...(theme.palette.mode === "dark" && {
-                      color: "white",
-                      borderColor: "white",
+                      color: theme.palette.info.light, // Adjust color for dark mode
                       "&:hover": {
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
+                        color: theme.palette.info.main, // Adjust hover color for dark mode
                       },
                     }),
                   }}
                 >
                   View More
-                </Button>
+                </Typography>
               </Card>
             </Grid>
           ))}

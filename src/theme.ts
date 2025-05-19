@@ -32,34 +32,34 @@ const createAppTheme = (mode: "light" | "dark") =>
       },
     },
     palette: {
-      mode, // Dynamically set the mode (light or dark)
-      primary: {
-        light: "#6573c3",
-        main: "#3f51b5",
-        dark: "#2c387e",
-        contrastText: "#fff",
-      },
-      secondary: {
-        light: "#dd33fa",
-        main: "#d500f9",
-        dark: "#9500ae",
-        contrastText: "#000",
-      },
-      background: {
-        default: mode === "dark" ? "#121212" : "#f0f0f0",
-        paper: mode === "dark" ? "#1e1e1e" : "#ffffff",
-      },
-      text: {
-        primary: mode === "dark" ? "#ffffff" : "#212121", // White text for dark mode, black for light mode
-        secondary: mode === "dark" ? "#b0b0b0" : "#757575", // Lighter text for dark mode
-      },
-      header: {
-        main: mode === "dark" ? "#333333" : "#3f51b5", // Custom header color
-      },
-      footer: {
-        main: mode === "dark" ? "#1e1e1e" : "#2c387e", // Custom footer color
-      },
-    },
+  mode,
+  primary: {
+    light: "#6573c3",
+    main: "#3f51b5",
+    dark: "#2c387e",
+    contrastText: "#fff",
+  },
+  secondary: {
+    light: "#dd33fa",
+    main: "#d500f9",
+    dark: "#9500ae",
+    contrastText: "#000",
+  },
+  background: {
+    default: mode === "dark" ? "#121212" : "#fff", // White background in light mode
+    paper: mode === "dark" ? "#1e1e1e" : "#fff",   // White paper in light mode
+  },
+  text: {
+    primary: mode === "dark" ? "#ffffff" : "#212121",
+    secondary: mode === "dark" ? "#b0b0b0" : "#757575",
+  },
+  header: {
+    main: mode === "dark" ? "#222" : "#fff", // White header in light mode
+  },
+  footer: {
+    main: mode === "dark" ? "#1e1e1e" : "#2c387e",
+  },
+},
     typography: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
       h1: { fontSize: "2.5rem", fontWeight: 700 },

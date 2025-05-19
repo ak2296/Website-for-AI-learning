@@ -19,7 +19,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Brightness4, Brightness7, YouTube as YouTubeIcon, Instagram as InstagramIcon } from "@mui/icons-material";
 import FacebookIcon from "@mui/icons-material/Facebook";
-import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
@@ -61,7 +60,9 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
           position="static"
           sx={{
             backgroundColor: muiTheme.palette.header.main,
-            color: muiTheme.palette.primary.contrastText,
+            color: muiTheme.palette.text.primary,
+            boxShadow: "none", // Remove default shadow
+            borderBottom: theme => `1px solid ${theme.palette.divider}`, // Fine line
             paddingBottom: 0,
           }}
         >
@@ -147,20 +148,22 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                       px: 1,
                       fontSize: "1.1rem",
                       textTransform: "none",
-                      color: "white",
+                      color: mode === "dark" ? "white" : muiTheme.palette.text.primary,
                       pb: 0,
                       borderBottom:
                         location.pathname === link.path
                           ? "3px solid #ff9800"
                           : "3px solid transparent",
                       borderRadius: "0px",
+                      backgroundColor: "transparent", 
                       "&:hover": {
-                        color: "white",
+                        color: mode === "dark" ? "white" : muiTheme.palette.primary.main,
                         borderBottom:
                           location.pathname === link.path
                             ? "3px solid #ff9800"
-                            : "3px solid rgba(255,255,255,0.7)",
+                            :  `3px solid ${muiTheme.palette.primary.main}`, 
                         borderRadius: "0px",
+                        backgroundColor: "transparent",
                       },
                     }}
                   >

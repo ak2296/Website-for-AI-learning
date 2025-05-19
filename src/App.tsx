@@ -5,6 +5,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { AnimatePresence } from "framer-motion";
 import ErrorBoundary from "./components/ErrorBoundary";
 import createAppTheme from "./theme"; // Import the dynamic theme creation function
+import MainLayout from "./layouts/MainLayout";
+
 
 // Import your pages
 import Home from "./pages/Home";
@@ -12,7 +14,6 @@ import About from "./pages/About";
 import Resources from "./pages/Resources";
 import Contact from "./pages/Contact";
 import ResourceDetail from "./pages/ResourceDetail";
-import MainLayout from "./layouts/MainLayout";
 
 export default function App() {
   const location = useLocation();

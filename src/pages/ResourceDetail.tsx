@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
-import { Container, Typography, CircularProgress, Button } from "@mui/material"; // Import Button
-import { Box } from "@mui/material";
+import { Container, Typography, CircularProgress, Button, Box, Paper } from "@mui/material"; // 🔷 Added Paper & Box for better structure
+import { useTheme } from "@mui/material/styles"; // 🔷 Import useTheme for styling
 
 type Resource = {
   id: number;
@@ -16,11 +16,11 @@ const fetchResource = async (id: string): Promise<Resource> => {
   return await response.json();
 };
 
-
 export default function ResourceDetail() {
   const { id } = useParams<{ id: string }>(); 
-  const navigate = useNavigate(); // Initialize useNavigate
- const [resource, setResource] = React.useState<Resource | null>(null);
+  const navigate = useNavigate();
+  const theme = useTheme(); // 🔷 Theme for styling
+  const [resource, setResource] = React.useState<Resource | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -28,9 +28,7 @@ export default function ResourceDetail() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        if (!id) {
-          throw new Error("Resource ID is missing");
-        }
+        if (!id) throw new Error("Resource ID is missing");
         const fetchedResource = await fetchResource(id);
         setResource(fetchedResource);
       } catch (err) {
@@ -43,7 +41,7 @@ export default function ResourceDetail() {
   }, [id]);
 
   const handleBack = () => {
-    navigate(-1); // Navigate back to the previous page
+    navigate(-1);
   };
 
   if (loading) return <CircularProgress />;
@@ -52,19 +50,43 @@ export default function ResourceDetail() {
 
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
-      {/* Add Back Button */}
-      <Button
-        variant="outlined"
-        onClick={handleBack}
-        sx={{ mb: 2 }} // Add some margin below the button
-      >
-        Back to Resources
-      </Button>
+     
+      <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleBack}
+          sx={{
+            px: 3,
+            py: 1,
+            borderRadius: "8px",
+            fontWeight: "bold",
+            boxShadow: theme.shadows[4], 
+            "&:hover": {
+              backgroundColor: theme.palette.primary.dark,
+              transform: "scale(1.05)",  
+            },
+            transition: "0.3s ease-in-out",
+          }}
+        >
+          ⬅ Back to Resources
+        </Button>
+      </Box>
 
-      <Typography variant="h4" gutterBottom>
-        {resource.title}
-      </Typography>
-      <Typography variant="body1">{resource.body}</Typography>
+      {/*  Wrapped Resource Details in Paper*/}
+     <Paper
+  elevation={6} // 
+  sx={{
+    p: 4, 
+    mb: 4, 
+    borderRadius: "12px", // 
+    boxShadow: (theme) => theme.shadows[6],  // 
+  }}
+>
+
+        <Typography variant="h4" gutterBottom>{resource.title}</Typography>
+        <Typography variant="body1">{resource.body}</Typography>
+      </Paper>
     </Container>
   );
 }

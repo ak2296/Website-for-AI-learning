@@ -1,4 +1,3 @@
-// src/pages/Contact.tsx
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Container, Typography, Box, TextField, Button } from "@mui/material";
@@ -30,8 +29,9 @@ export default function Contact() {
             fullWidth 
             aria-label="Name Input"
             sx={{
-              input: {
-                backgroundColor: "white", // Set the input field background to white
+              input: { backgroundColor: "white" },
+              "& .MuiOutlinedInput-root": {
+                "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: (theme) => theme.palette.primary.light }, // ✅ Changes hover border color to primary.light
               },
             }}
           />
@@ -42,8 +42,9 @@ export default function Contact() {
             fullWidth 
             aria-label="Email Input"
             sx={{
-              input: {
-                backgroundColor: "white", // Set the input field background to white
+              input: { backgroundColor: "white" },
+              "& .MuiOutlinedInput-root": {
+                "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: (theme) => theme.palette.primary.light }, // ✅ Fixes black hover border issue
               },
             }}
           />
@@ -56,26 +57,38 @@ export default function Contact() {
             aria-label="Message Input"
             sx={{
               "& .MuiOutlinedInput-root": {
-                padding: "0", // Remove padding inside the outlined input
+                padding: "0",
+                "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: (theme) => theme.palette.primary.light }, // ✅ Ensures textarea hover border follows primary.light
               },
-              "& .MuiOutlinedInput-input": {
-                backgroundColor: "white", // Set the textarea background to white
-                padding: "0", // Remove padding inside the textarea
-              },
-              "& textarea": {
-                backgroundColor: "white", // Ensure the textarea itself has a white background
-                padding: "0", // Remove padding inside the textarea
-              },
+              "& .MuiOutlinedInput-input": { backgroundColor: "white", padding: "0" },
+              "& textarea": { backgroundColor: "white", padding: "0" },
             }}
           />
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          style={{ display: "inline-flex", width: "fit-content" }} // 
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            endIcon={<SendIcon />}
+            sx={{
+              px: 3,
+              py: 1,
+              borderRadius: "8px",
+              fontWeight: "bold",
+              boxShadow: (theme) => theme.shadows[4],
+              "&:hover": {
+                backgroundColor: (theme) => theme.palette.primary.dark,
+                transform: "scale(1.05)",
+              },
+              transition: "0.3s ease-in-out",
+            }}
           >
-            <Button variant="contained" color="primary" endIcon={<SendIcon />}>
-              {t("send", "Send Message")}
-            </Button>
-          </motion.div>
+            {t("send", "Send Message")}
+          </Button>
+        </motion.div>
         </Box>
       </Container>
     </motion.div>

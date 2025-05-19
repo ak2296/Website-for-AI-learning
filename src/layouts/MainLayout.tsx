@@ -14,10 +14,17 @@ import {
   useMediaQuery,
   Divider,
   Paper,
+  alpha,
 } from "@mui/material";
+import type { Theme } from "@mui/material";
 import ListItemButton from "@mui/material/ListItemButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Brightness4, Brightness7, YouTube as YouTubeIcon, Instagram as InstagramIcon } from "@mui/icons-material";
+import {
+  Brightness4,
+  Brightness7,
+  YouTube as YouTubeIcon,
+  Instagram as InstagramIcon,
+} from "@mui/icons-material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import { useTheme } from "@mui/material/styles";
@@ -32,9 +39,15 @@ interface MainLayoutProps {
 export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
   const { t } = useTranslation();
   const location = useLocation();
-
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
+
+  // Debug: Log theme values
+  React.useEffect(() => {
+    console.log("Theme mode:", mode);
+    console.log("Header color:", muiTheme.palette.header.main);
+    console.log("Background default:", muiTheme.palette.background.default);
+  }, [mode, muiTheme]);
 
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
@@ -54,16 +67,27 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",
+          height: "100vh",
+          width: "100vw",
+          margin: 0,
+          backgroundColor: muiTheme.palette.background.default,
         }}
       >
         <AppBar
           position="static"
           sx={{
-            backgroundColor: muiTheme.palette.header.main,
-            color: muiTheme.palette.text.primary,
-            boxShadow: "none", // Remove default shadow
-            borderBottom: theme => `1px solid ${theme.palette.divider}`, // Fine line
-            paddingBottom: 0,
+            backgroundColor: (theme: Theme) => theme.palette.header.main,
+            color: (theme: Theme) => theme.palette.text.primary,
+            boxShadow: "none",
+            borderBottom: (theme: Theme) =>
+              theme.palette.mode === "dark"
+                ? "1px solid rgba(255, 255, 255, 0.3)"
+                : `1px solid ${theme.palette.divider}`,
+            padding: 0,
+            margin: 0,
+            "& .MuiToolbar-root": {
+              backgroundColor: "inherit",
+            },
           }}
         >
           {isMobile ? (
@@ -75,6 +99,7 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                 minHeight: "100px",
                 px: 2,
                 pb: 0,
+                backgroundColor: "inherit",
               }}
             >
               <Typography variant="h5">{t("yourWebsite")}</Typography>
@@ -83,6 +108,7 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
+                  backgroundColor: "inherit",
                 }}
               >
                 <Box
@@ -92,9 +118,21 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                   sx={{ height: "40px" }}
                 />
                 <IconButton
-                  color="inherit"
                   onClick={handleDrawerToggle}
-                  sx={{ mt: 1 }}
+                  sx={{
+                    mt: 1,
+                    color: (theme: Theme) =>
+                      theme.palette.mode === "light"
+                        ? theme.palette.primary.light
+                        : theme.palette.text.primary,
+                    "&:hover": {
+                      backgroundColor: (theme: Theme) =>
+                        theme.palette.mode === "light"
+                          ? "rgba(0, 0, 0, 0.1)"
+                          : "rgba(255, 255, 255, 0.2)",
+                    },
+                    transition: "background-color 0.3s",
+                  }}
                 >
                   <MenuIcon />
                 </IconButton>
@@ -106,9 +144,10 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                 flexDirection: "column",
                 alignItems: "stretch",
                 justifyContent: "center",
-                p: 1,
+                padding: 3,
                 pb: 0,
                 minHeight: "220px",
+                backgroundColor: "inherit",
               }}
             >
               <Box
@@ -118,6 +157,7 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                   alignItems: "center",
                   px: 3,
                   pb: 1,
+                  backgroundColor: "inherit",
                 }}
               >
                 <Typography variant="h4">{t("yourWebsite")}</Typography>
@@ -136,6 +176,7 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                   position: "relative",
                   px: 3,
                   pb: 0,
+                  backgroundColor: "inherit",
                 }}
               >
                 {navLinks.map((link) => (
@@ -148,23 +189,29 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                       px: 1,
                       fontSize: "1.1rem",
                       textTransform: "none",
-                      color: mode === "dark" ? "white" : muiTheme.palette.text.primary,
+                      color:
+                        mode === "dark" ? "white" : muiTheme.palette.text.primary,
                       pb: 0,
                       borderBottom:
                         location.pathname === link.path
                           ? "3px solid #ff9800"
                           : "3px solid transparent",
                       borderRadius: "0px",
-                      backgroundColor: "transparent", 
+                      backgroundColor: "transparent",
                       "&:hover": {
-                        color: mode === "dark" ? "white" : muiTheme.palette.primary.main,
+                        color:
+                          mode === "dark"
+                            ? "white"
+                            : muiTheme.palette.primary.main,
                         borderBottom:
                           location.pathname === link.path
                             ? "3px solid #ff9800"
-                            :  `3px solid ${muiTheme.palette.primary.main}`, 
+                            : `3px solid ${muiTheme.palette.primary.main}`,
                         borderRadius: "0px",
                         backgroundColor: "transparent",
+                        transform: "scale(1.1)",
                       },
+                      transition: "transform 0.2s, color 0.2s, border-bottom 0.2s",
                     }}
                   >
                     {link.label}
@@ -177,20 +224,41 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                     display: "flex",
                     alignItems: "center",
                     gap: 1,
+                    backgroundColor: "inherit",
                   }}
                 >
-                  <IconButton color="inherit" onClick={toggleMode} 
-                  sx={{
-                    px: 1, // Adjust horizontal padding
-                    borderRadius: "50%", // Optional: Add rounded corners
-                    transition: "background-color 0.3s", // Smooth transition for hover effect
-                    "&:hover": {
-                    backgroundColor: mode === "dark" ? "rgba(255, 255, 255, 0.2)" : muiTheme.palette.primary.light, // Hover color for DM and BM
-                    },
-                  }}>
+                  <IconButton
+                    onClick={toggleMode}
+                    sx={{
+                      px: 1,
+                      borderRadius: "50%",
+                      color: (theme: Theme) =>
+                        theme.palette.mode === "light"
+                          ? theme.palette.primary.light
+                          : "white",
+                      "&:hover": {
+                        backgroundColor: (theme: Theme) =>
+                          alpha(theme.palette.primary.light, 0.2),
+                      },
+                      transition: "background-color 0.3s",
+                    }}
+                  >
                     {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
                   </IconButton>
-                  <LanguageSwitcher mode={mode} sx={{ px: 0, py: 0 }} />
+                  <LanguageSwitcher
+                    mode={mode}
+                    sx={{
+                      px: 0,
+                      py: 0,
+                      "&:hover": {
+                        backgroundColor: (theme: Theme) =>
+                          theme.palette.mode === "light"
+                            ? alpha(theme.palette.primary.light, 0.2)
+                            : theme.palette.action.hover,
+                      },
+                      transition: "background-color 0.3s",
+                    }}
+                  />
                 </Box>
               </Box>
             </Toolbar>
@@ -206,8 +274,33 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                   component={Link}
                   to={link.path}
                   onClick={handleDrawerToggle}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: (theme: Theme) =>
+                        theme.palette.mode === "light"
+                          ? alpha(theme.palette.primary.light, 0.2)
+                          : theme.palette.action.hover,
+                    },
+                  }}
                 >
-                  <ListItemText primary={link.label} />
+                  <ListItemText
+                    primary={
+                      <span
+                        style={{
+                          display: "inline-block",
+                          transition: "transform 0.2s",
+                        }}
+                        className="nav-text"
+                      >
+                        {link.label}
+                      </span>
+                    }
+                    sx={{
+                      "&:hover .nav-text": {
+                        transform: "scale(1.1)",
+                      },
+                    }}
+                  />
                 </ListItemButton>
               ))}
             </List>
@@ -231,16 +324,35 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                   gap: 2,
                 }}
               >
-                <LanguageSwitcher drawer mode={mode} />
-                <IconButton color="inherit" onClick={toggleMode}
-                  sx={{ pd: 1,
-                  
-                    transition: "background-color 0.3s", // Smooth transition for hover effect
+                <LanguageSwitcher
+                  drawer
+                  mode={mode}
+                  sx={{
                     "&:hover": {
-                      backgroundColor: mode === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)", // Hover color for DM and BM
+                      backgroundColor: (theme: Theme) =>
+                        theme.palette.mode === "light"
+                          ? alpha(theme.palette.primary.light, 0.2)
+                          : theme.palette.action.hover,
                     },
-                   }}>
-                  {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
+                    transition: "background-color 0.3s",
+                  }}
+                />
+                <IconButton
+                  onClick={toggleMode}
+                  sx={{
+                    px: 1,
+                    color: (theme: Theme) =>
+                      theme.palette.mode === "light"
+                        ? theme.palette.primary.light
+                        : "white",
+                    "&:hover": {
+                      backgroundColor: (theme: Theme) =>
+                        alpha(theme.palette.primary.light, 0.2),
+                    },
+                    transition: "background-color 0.3s",
+                  }}
+                >
+                  <Brightness7 />
                 </IconButton>
               </Box>
             </Box>
@@ -252,6 +364,7 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
             flex: 1,
             overflowY: "auto",
             paddingBottom: "50px",
+            backgroundColor: muiTheme.palette.background.default,
           }}
         >
           <Outlet />

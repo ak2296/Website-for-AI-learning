@@ -98,47 +98,31 @@ export default function Resources() {
 
         <Grid
           container
-          spacing={1}
+          spacing={2}
           sx={{
             justifyContent: isMobile ? "center" : "space-between",
             alignItems: "stretch",
           }}
         >
-          {groupedData[activeStep] && groupedData[activeStep].map((resource) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={6}
-              lg={4}
-              xl={3}
-              key={resource.id}
-              sx={{
-                flex: "0 0 auto",
-                width: {
-                  xs: "min(90vw, 450px)",
-                  sm: "calc(50% - 4px)",
-                  md: "calc(50% - 4px)",
-                  lg: "calc(33.3333% - 5.3333px)",
-                  xl: "calc(25% - 6px)",
-                },
-                minWidth: {
-                  xs: "min(90vw, 450px)",
-                  sm: "min(45%, 350px)",
-                  md: "min(45%, 350px)",
-                  lg: "min(30%, 300px)",
-                  xl: "min(22%, 300px)",
-                },
-                display: "flex",
-                justifyContent: "center",
-                margin: isMobile ? "0 auto" : undefined,
-                boxSizing: "border-box",
-              }}
-            >
-              <Card
+          {groupedData[activeStep] &&
+            groupedData[activeStep].map((resource) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={6}
+                lg={4}
+                xl={3}
+                key={resource.id}
                 sx={{
-                  width: "100%",
-                  height: "100%",
+                  flex: "0 0 auto",
+                  width: {
+                    xs: "min(90vw, 450px)",
+                    sm: "calc(50% - 8px)",
+                    md: "calc(50% - 8px)",
+                    lg: "calc(33.3333% - 10.6666px)",
+                    xl: "calc(25% - 12px)",
+                  },
                   minWidth: {
                     xs: "min(90vw, 450px)",
                     sm: "min(45%, 350px)",
@@ -146,72 +130,89 @@ export default function Resources() {
                     lg: "min(30%, 300px)",
                     xl: "min(22%, 300px)",
                   },
-                  minHeight: 200,
                   display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  flexShrink: 0,
+                  justifyContent: "center",
+                  margin: isMobile ? "0 auto" : undefined,
                   boxSizing: "border-box",
-                  boxShadow: theme.shadows[8],
                 }}
               >
-                <CardContent
+                <Card
                   sx={{
                     width: "100%",
-                    maxWidth: "100%",
-                    minWidth: 0,
-                    flex: 1,
+                    height: "100%",
+                    minWidth: {
+                      xs: "min(90vw, 450px)",
+                      sm: "min(45%, 350px)",
+                      md: "min(45%, 350px)",
+                      lg: "min(30%, 300px)",
+                      xl: "min(22%, 300px)",
+                    },
+                    minHeight: 200,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                     flexShrink: 0,
-                    overflow: "hidden",
                     boxSizing: "border-box",
+                    boxShadow: theme.shadows[8],
                   }}
                 >
-                  <Typography
-                    variant="h6"
+                  <CardContent
                     sx={{
                       width: "100%",
                       maxWidth: "100%",
                       minWidth: 0,
+                      flex: 1,
                       flexShrink: 0,
                       overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitBoxOrient: "vertical",
-                      WebkitLineClamp: 3,
-                      maxHeight: "4.5em",
                       boxSizing: "border-box",
                     }}
                   >
-                    {resource.title}
-                  </Typography>
-                </CardContent>
-                <Typography
-                  component={Link}
-                  to={`/resources/${resource.id}`}
-                  variant="body2"
-                  sx={{
-                    alignSelf: "flex-start",
-                    ml: 2,
-                    mb: 2,
-                    color: theme.palette.primary.main,
-                    textDecoration: "none",
-                    cursor: "pointer",
-                    "&:hover": {
-                      color: theme.palette.primary.dark,
-                    },
-                    ...(theme.palette.mode === "dark" && {
-                      color: theme.palette.info.light,
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        width: "100%",
+                        maxWidth: "100%",
+                        minWidth: 0,
+                        flexShrink: 0,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 3,
+                        maxHeight: "4.5em",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      {resource.title}
+                    </Typography>
+                  </CardContent>
+                  <Typography
+                    component={Link}
+                    to={`/resources/${resource.id}`}
+                    variant="body2"
+                    sx={{
+                      alignSelf: "flex-start",
+                      ml: 2,
+                      mb: 2,
+                      color: theme.palette.primary.main,
+                      textDecoration: "none",
+                      cursor: "pointer",
                       "&:hover": {
-                        color: theme.palette.info.main,
+                        color: theme.palette.primary.dark,
                       },
-                    }),
-                  }}
-                >
-                  View More
-                </Typography>
-              </Card>
-            </Grid>
-          ))}
+                      ...(theme.palette.mode === "dark" && {
+                        color: theme.palette.info.light,
+                        "&:hover": {
+                          color: theme.palette.info.main,
+                        },
+                      }),
+                    }}
+                  >
+                    View More
+                  </Typography>
+                </Card>
+              </Grid>
+            ))}
         </Grid>
 
         <div
@@ -229,12 +230,16 @@ export default function Resources() {
             onClick={handleBack}
             disabled={activeStep === 0}
             sx={{
-              color: theme.palette.mode === "dark" ? "white" : theme.palette.primary.main,
+              color:
+                theme.palette.mode === "dark"
+                  ? "white"
+                  : theme.palette.primary.main,
               "&:hover": {
                 backgroundColor:
                   theme.palette.mode === "dark"
                     ? "rgba(255, 255, 255, 0.1)"
                     : theme.palette.primary.light,
+                    color:"white",
               },
               [theme.breakpoints.down("sm")]: {
                 fontSize: "0.8rem",
@@ -242,7 +247,11 @@ export default function Resources() {
               },
             }}
           >
-            {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+            {theme.direction === "rtl" ? (
+              <KeyboardArrowRight />
+            ) : (
+              <KeyboardArrowLeft />
+            )}
             Back
           </Button>
 
@@ -257,19 +266,24 @@ export default function Resources() {
           >
             {(() => {
               const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-              const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+              const isMediumScreen = useMediaQuery(
+                theme.breakpoints.between("sm", "md")
+              );
               const visibleRange = isSmallScreen ? 2 : isMediumScreen ? 3 : 4;
 
               return Array.from({ length: maxSteps }).map((_, index) => {
                 const isVisible =
                   index === 0 ||
                   index === maxSteps - 1 ||
-                  (index >= activeStep - visibleRange && index <= activeStep + visibleRange);
+                  (index >= activeStep - visibleRange &&
+                    index <= activeStep + visibleRange);
 
                 if (!isVisible) {
                   if (
-                    (index === activeStep - visibleRange - 1 && activeStep > visibleRange) ||
-                    (index === activeStep + visibleRange + 1 && activeStep < maxSteps - visibleRange - 1)
+                    (index === activeStep - visibleRange - 1 &&
+                      activeStep > visibleRange) ||
+                    (index === activeStep + visibleRange + 1 &&
+                      activeStep < maxSteps - visibleRange - 1)
                   ) {
                     return <span key={index}>...</span>;
                   }
@@ -304,12 +318,16 @@ export default function Resources() {
             onClick={handleNext}
             disabled={activeStep === maxSteps - 1}
             sx={{
-              color: theme.palette.mode === "dark" ? "white" : theme.palette.primary.main,
+              color:
+                theme.palette.mode === "dark"
+                  ? "white"
+                  : theme.palette.primary.main,
               "&:hover": {
                 backgroundColor:
                   theme.palette.mode === "dark"
                     ? "rgba(255, 255, 255, 0.1)"
                     : theme.palette.primary.light,
+                    color:"white",
               },
               [theme.breakpoints.down("sm")]: {
                 fontSize: "0.8rem",
@@ -318,7 +336,11 @@ export default function Resources() {
             }}
           >
             Next
-            {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+            {theme.direction === "rtl" ? (
+              <KeyboardArrowLeft />
+            ) : (
+              <KeyboardArrowRight />
+            )}
           </Button>
         </div>
       </motion.div>

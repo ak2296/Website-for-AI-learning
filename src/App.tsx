@@ -35,7 +35,8 @@ export default function App() {
             element={<MainLayout toggleMode={toggleMode} mode={mode} />}
           >
             <Route index element={<Home />} />
-            <Route path="about" element={<About />} />
+            <Route path="about" 
+            element={<About />} />
             <Route
               path="resources"
               element={
@@ -45,8 +46,9 @@ export default function App() {
               }
             />
             <Route
-              path="/resources/group/:groupId"
+              path="/resources/:id" 
               element={<ResourceDetail />}
+              
             />
             <Route path="contact" element={<Contact />} />
           </Route>

@@ -7,7 +7,6 @@ import {
   Button,
   Card,
   CardContent,
-  MobileStepper,
   useMediaQuery,
   Grid,
 } from "@mui/material";
@@ -37,47 +36,36 @@ export default function Resources() {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // <600px
-  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md")); // 600px–767px
-  const isLargeScreen = useMediaQuery(theme.breakpoints.between(767, 960)); // 767px–959px
-  const isExtraLargeScreen = useMediaQuery(theme.breakpoints.between(960, 1200)); // 960px–1199px
-  const isXLScreen = useMediaQuery(theme.breakpoints.up("xl")); // ≥1200px
-  const [activeStep, setActiveStep] = useState(0); // Track the current step
+  const isMedium = useMediaQuery(theme.breakpoints.between("sm", "lg")); // 600px–1199px
+  const isLarge = useMediaQuery(theme.breakpoints.between("lg", "xl")); // 1200px–1535px
+  const isExtraLarge = useMediaQuery(theme.breakpoints.up("xl")); // ≥1536px
+  const [activeStep, setActiveStep] = useState(0);
 
   if (isLoading) return <CircularProgress />;
   if (error instanceof Error)
     return <Typography color="error">Error: {error.message}</Typography>;
 
-  // Define the number of rows per page
-  // Rows per page
-const rowsPerPage = isMobile
-? 6
-: isMediumScreen
-? 4
-: isLargeScreen
-? 3
-: isExtraLargeScreen
-? 2
-: 2; // ≥1200px uses 2 rows
+  const cardsPerRow = isMobile
+    ? 1 // xs: 1 box per row (<600px)
+    : isMedium
+    ? 2 // sm/md: 2 boxes per row (600px–1199px)
+    : isLarge
+    ? 3 // lg: 3 boxes per row
+    : 4; // xl: 4 boxes per row
 
-// Cards per row
-const cardsPerRow = isMobile
-? 1
-: isMediumScreen
-? 2
-: isLargeScreen
-? 3
-: isExtraLargeScreen
-? 4
-: 4; // ≥1200px uses 4 cards per ro
+  const rowsPerPage = isMobile
+    ? 6 // xs: 6 rows
+    : isMedium
+    ? 3 // sm/md: 3 rows
+    : isLarge
+    ? 2 // lg: 2 rows
+    : 2; // xl: 2 rows
 
- // Calculate the total number of cards per page
-// Memoize cardsPerPage
-const cardsPerPage = useMemo(
-  () => cardsPerRow * rowsPerPage,
-  [cardsPerRow, rowsPerPage]
-);
+  const cardsPerPage = useMemo(
+    () => cardsPerRow * rowsPerPage,
+    [cardsPerRow, rowsPerPage]
+  );
 
-  // Group data into chunks of cardsPerPage
   const groupedData: Resource[][] = useMemo(() => {
     const groups: Resource[][] = [];
     for (let i = 0; i < (data ?? []).length; i += cardsPerPage) {
@@ -86,18 +74,18 @@ const cardsPerPage = useMemo(
     return groups;
   }, [data, cardsPerPage]);
 
-  const maxSteps = groupedData.length; // Total number of steps
+  const maxSteps = groupedData.length;
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => Math.min(prevActiveStep + 1, maxSteps - 1));
+    setActiveStep((prev) => Math.min(prev + 1, maxSteps - 1));
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => Math.max(prevActiveStep - 1, 0));
+    setActiveStep((prev) => Math.max(prev - 1, 0));
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4 }}>
+    <Container maxWidth={false} sx={{ mt: 4, px: 0 }}>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -108,71 +96,113 @@ const cardsPerPage = useMemo(
           Resources
         </Typography>
 
-     {/* Render Cards for the Current Step */}
         <Grid
           container
-          spacing={3}
+          spacing={1}
           sx={{
-            justifyContent: isMobile ? "center" : "flex-start", // Center for single column, left-align for multiple columns
-            alignItems: "center",
-            paddingLeft: isMobile ? 0 : 10, // Add left padding for more than 1 column
+            justifyContent: isMobile ? "center" : "space-between",
+            alignItems: "stretch",
           }}
         >
-          {groupedData[activeStep]?.map((resource) => (
-           <Grid item xs={12} sm={6} md={isLargeScreen ? 4 : 3} lg={3} key={resource.id}>
+          {groupedData[activeStep] && groupedData[activeStep].map((resource) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={6}
+              lg={4}
+              xl={3}
+              key={resource.id}
+              sx={{
+                flex: "0 0 auto",
+                width: {
+                  xs: "min(90vw, 450px)",
+                  sm: "calc(50% - 4px)",
+                  md: "calc(50% - 4px)",
+                  lg: "calc(33.3333% - 5.3333px)",
+                  xl: "calc(25% - 6px)",
+                },
+                minWidth: {
+                  xs: "min(90vw, 450px)",
+                  sm: "min(45%, 350px)",
+                  md: "min(45%, 350px)",
+                  lg: "min(30%, 300px)",
+                  xl: "min(22%, 300px)",
+                },
+                display: "flex",
+                justifyContent: "center",
+                margin: isMobile ? "0 auto" : undefined,
+                boxSizing: "border-box",
+              }}
+            >
               <Card
                 sx={{
-                  minWidth:{ xs: "90vw", sm: "30vw", md:"18vw",lg:"17vw" },
-                  maxWidth: { xs: "90vw", sm: "30vw", md:"18vw",lg:"17vw" }, // Maximum width of the card
-                  minHeight: {xs:100, sm: 200, md:300}, // Maximum height of the card
+                  width: "100%",
+                  height: "100%",
+                  minWidth: {
+                    xs: "min(90vw, 450px)",
+                    sm: "min(45%, 350px)",
+                    md: "min(45%, 350px)",
+                    lg: "min(30%, 300px)",
+                    xl: "min(22%, 300px)",
+                  },
+                  minHeight: 200,
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  overflow: "hidden",
-                  boxShadow: theme.shadows[8], // Added darker shadow
+                  flexShrink: 0,
+                  boxSizing: "border-box",
+                  boxShadow: theme.shadows[8],
                 }}
               >
                 <CardContent
                   sx={{
+                    width: "100%",
+                    maxWidth: "100%",
+                    minWidth: 0,
                     flex: 1,
+                    flexShrink: 0,
                     overflow: "hidden",
-                    maxHeight: 300,
+                    boxSizing: "border-box",
                   }}
                 >
                   <Typography
                     variant="h6"
                     sx={{
-                      mb: 1,
+                      width: "100%",
+                      maxWidth: "100%",
+                      minWidth: 0,
+                      flexShrink: 0,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                       display: "-webkit-box",
                       WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
                       WebkitLineClamp: 3,
-                      textOverflow: "ellipsis",
-                      maxHeight: "4.5em", // Fallback for browsers not supporting WebkitLineClamp
+                      maxHeight: "4.5em",
+                      boxSizing: "border-box",
                     }}
                   >
                     {resource.title}
                   </Typography>
                 </CardContent>
-                {/* Changed Button to Typography styled as a link */}
                 <Typography
                   component={Link}
-                  to={`/resources/group/${activeStep}`}
-                  variant="body2" // Use a body variant for text
+                  to={`/resources/${resource.id}`}
+                  variant="body2"
                   sx={{
                     alignSelf: "flex-start",
                     ml: 2,
                     mb: 2,
-                    color: theme.palette.primary.main, // Use primary color for link
-                    textDecoration: "none", // Add underline
-                    cursor: "pointer", // Indicate it's clickable
+                    color: theme.palette.primary.main,
+                    textDecoration: "none",
+                    cursor: "pointer",
                     "&:hover": {
-                      color: theme.palette.primary.dark, // Darken color on hover
+                      color: theme.palette.primary.dark,
                     },
                     ...(theme.palette.mode === "dark" && {
-                      color: theme.palette.info.light, // Adjust color for dark mode
+                      color: theme.palette.info.light,
                       "&:hover": {
-                        color: theme.palette.info.main, // Adjust hover color for dark mode
+                        color: theme.palette.info.main,
                       },
                     }),
                   }}
@@ -184,133 +214,113 @@ const cardsPerPage = useMemo(
           ))}
         </Grid>
 
-        {/* Stepper for navigation */}
         <div
-  style={{
-    display: "flex",
-    flexWrap: "wrap", // Allow wrapping on small screens
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "16px", // Add spacing between buttons and dots
-    marginTop: "16px",
-  }}
->
-  {/* Back Button */}
-  <Button
-    size="small"
-    onClick={handleBack}
-    disabled={activeStep === 0}
-    sx={{
-      color: theme.palette.mode === "dark" ? "white" : theme.palette.primary.main, // Adjust color for dark mode
-      "&:hover": {
-        backgroundColor:
-          theme.palette.mode === "dark"
-            ? "rgba(255, 255, 255, 0.1)" // Subtle hover effect for dark mode
-            : theme.palette.primary.light,
-      },
-      [theme.breakpoints.down("sm")]: {
-        fontSize: "0.8rem", // Smaller font size for small screens
-        padding: "4px 8px", // Adjust padding
-      },
-    }}
-  >
-    {theme.direction === "rtl" ? (
-      <KeyboardArrowRight />
-    ) : (
-      <KeyboardArrowLeft />
-    )}
-    Back
-  </Button>
-
-{/* Manually Render Clickable Dots */}
-<div
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "8px",
-    flexWrap: "wrap", // Allow dots to wrap on small screens
-  }}
->
-  {(() => {
-    // Move useMediaQuery outside the loop
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-    const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
-
-    // Dynamically adjust the number of visible dots based on screen size
-    const visibleRange = isSmallScreen
-      ? 2 // Show 5 dots (2 before and 2 after the active step)
-      : isMediumScreen
-      ? 3 // Show 7 dots (3 before and 3 after the active step)
-      : 4; // Show 9 dots (4 before and 4 after the active step)
-
-    return Array.from({ length: maxSteps }).map((_, index) => {
-      const isVisible =
-        index === 0 || // Always show the first dot
-        index === maxSteps - 1 || // Always show the last dot
-        (index >= activeStep - visibleRange && index <= activeStep + visibleRange); // Show dots around the active step
-
-      if (!isVisible) {
-        // Add ellipses for hidden dots
-        if (
-          (index === activeStep - visibleRange - 1 && activeStep > visibleRange) || // Ellipses before visible dots
-          (index === activeStep + visibleRange + 1 && activeStep < maxSteps - visibleRange - 1) // Ellipses after visible dots
-        ) {
-          return <span key={index}>...</span>;
-        }
-        return null; // Hide the dot
-      }
-
-      return (
-        <span
-          key={index}
-          onClick={() => setActiveStep(index)} // Navigate to the clicked dot
           style={{
-            width: isSmallScreen ? 8 : 10, // Smaller dots on small screens
-            height: isSmallScreen ? 8 : 10,
-            borderRadius: "50%",
-            backgroundColor:
-              activeStep === index
-                ? theme.palette.mode === "dark"
-                  ? "#ff9800" // Active dot color for dark mode
-                  : theme.palette.primary.main // Active dot color for light mode
-                : theme.palette.grey[400], // Inactive dot color
-            cursor: "pointer",
-            transition: "background-color 0.3s",
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "16px",
+            marginTop: "16px",
           }}
-        />
-      );
-    });
-  })()}
-</div>
+        >
+          <Button
+            size="small"
+            onClick={handleBack}
+            disabled={activeStep === 0}
+            sx={{
+              color: theme.palette.mode === "dark" ? "white" : theme.palette.primary.main,
+              "&:hover": {
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255, 255, 255, 0.1)"
+                    : theme.palette.primary.light,
+              },
+              [theme.breakpoints.down("sm")]: {
+                fontSize: "0.8rem",
+                padding: "4px 8px",
+              },
+            }}
+          >
+            {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+            Back
+          </Button>
 
-  {/* Next Button */}
-  <Button
-  size="small"
-  onClick={handleNext}
-  disabled={activeStep === maxSteps - 1}
-  sx={{
-    color: theme.palette.mode === "dark" ? "white" : theme.palette.primary.main, // Adjust color for dark mode
-    "&:hover": {
-      backgroundColor:
-        theme.palette.mode === "dark"
-          ? "rgba(255, 255, 255, 0.1)" // Subtle hover effect for dark mode
-          : theme.palette.primary.light,
-    },
-    [theme.breakpoints.down("sm")]: {
-      fontSize: "0.8rem", // Smaller font size for small screens
-      padding: "4px 8px", // Adjust padding
-    },
-  }}
->
-  Next
-  {theme.direction === "rtl" ? (
-    <KeyboardArrowLeft />
-  ) : (
-    <KeyboardArrowRight />
-  )}
-</Button>
-</div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "8px",
+              flexWrap: "wrap",
+            }}
+          >
+            {(() => {
+              const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+              const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+              const visibleRange = isSmallScreen ? 2 : isMediumScreen ? 3 : 4;
+
+              return Array.from({ length: maxSteps }).map((_, index) => {
+                const isVisible =
+                  index === 0 ||
+                  index === maxSteps - 1 ||
+                  (index >= activeStep - visibleRange && index <= activeStep + visibleRange);
+
+                if (!isVisible) {
+                  if (
+                    (index === activeStep - visibleRange - 1 && activeStep > visibleRange) ||
+                    (index === activeStep + visibleRange + 1 && activeStep < maxSteps - visibleRange - 1)
+                  ) {
+                    return <span key={index}>...</span>;
+                  }
+                  return null;
+                }
+
+                return (
+                  <span
+                    key={index}
+                    onClick={() => setActiveStep(index)}
+                    style={{
+                      width: isSmallScreen ? 8 : 10,
+                      height: isSmallScreen ? 8 : 10,
+                      borderRadius: "50%",
+                      backgroundColor:
+                        activeStep === index
+                          ? theme.palette.mode === "dark"
+                            ? "#ff9800"
+                            : theme.palette.primary.main
+                          : theme.palette.grey[400],
+                      cursor: "pointer",
+                      transition: "background-color 0.3s",
+                    }}
+                  />
+                );
+              });
+            })()}
+          </div>
+
+          <Button
+            size="small"
+            onClick={handleNext}
+            disabled={activeStep === maxSteps - 1}
+            sx={{
+              color: theme.palette.mode === "dark" ? "white" : theme.palette.primary.main,
+              "&:hover": {
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255, 255, 255, 0.1)"
+                    : theme.palette.primary.light,
+              },
+              [theme.breakpoints.down("sm")]: {
+                fontSize: "0.8rem",
+                padding: "4px 8px",
+              },
+            }}
+          >
+            Next
+            {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+          </Button>
+        </div>
       </motion.div>
     </Container>
   );

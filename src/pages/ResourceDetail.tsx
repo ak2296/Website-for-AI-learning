@@ -1,6 +1,6 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import { Container, Typography, CircularProgress } from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Container, Typography, CircularProgress, Button } from "@mui/material"; // Import Button
 import { Box } from "@mui/material";
 
 type Resource = {
@@ -9,25 +9,30 @@ type Resource = {
   body: string;
 };
 
-const fetchResources = async (): Promise<Resource[]> => {
-  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-  if (!response.ok) throw new Error("Failed to fetch resources");
+// Fetch a single resource by ID
+const fetchResource = async (id: string): Promise<Resource> => {
+  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+  if (!response.ok) throw new Error("Failed to fetch resource");
   return await response.json();
 };
 
-export default function ResourceGroupDetail() {
-  const { groupId } = useParams<{ groupId: string }>();
-  const [resources, setResources] = React.useState<Resource[]>([]);
+
+export default function ResourceDetail() {
+  const { id } = useParams<{ id: string }>(); 
+  const navigate = useNavigate(); // Initialize useNavigate
+ const [resource, setResource] = React.useState<Resource | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const data = await fetchResources();
-        const startIndex = Number(groupId) * 5;
-        const group = data.slice(startIndex, startIndex + 5);
-        setResources(group);
+        if (!id) {
+          throw new Error("Resource ID is missing");
+        }
+        const fetchedResource = await fetchResource(id);
+        setResource(fetchedResource);
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -35,22 +40,31 @@ export default function ResourceGroupDetail() {
       }
     };
     fetchData();
-  }, [groupId]);
+  }, [id]);
+
+  const handleBack = () => {
+    navigate(-1); // Navigate back to the previous page
+  };
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">Error: {error}</Typography>;
+  if (!resource) return <Typography>Resource not found</Typography>;
 
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
+      {/* Add Back Button */}
+      <Button
+        variant="outlined"
+        onClick={handleBack}
+        sx={{ mb: 2 }} // Add some margin below the button
+      >
+        Back to Resources
+      </Button>
+
       <Typography variant="h4" gutterBottom>
-        Resource 
+        {resource.title}
       </Typography>
-      {resources.map((resource) => (
-        <Box key={resource.id} sx={{ mb: 3 }}>
-          <Typography variant="h6">{resource.title}</Typography>
-          <Typography variant="body1">{resource.body}</Typography>
-        </Box>
-      ))}
+      <Typography variant="body1">{resource.body}</Typography>
     </Container>
   );
 }

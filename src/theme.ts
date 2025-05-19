@@ -26,9 +26,9 @@ const createAppTheme = (mode: "light" | "dark") =>
       values: {
         xs: 0, // Extra small devices
         sm: 600, // Small devices (starts at 600px)
-        md: 767, // Medium devices (starts at 767px)
-        lg: 960, // Large devices (starts at 960px)
-        xl: 1280, // Extra large devices
+        md: 900, // Medium devices (starts at 767px)
+        lg: 1200, // Large devices (starts at 960px)
+        xl: 1536, // Extra large devices
       },
     },
     palette: {

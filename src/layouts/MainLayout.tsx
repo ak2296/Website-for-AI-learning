@@ -67,7 +67,7 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",
-          height: "100vh",
+          
           width: "100vw",
           margin: 0,
           backgroundColor: muiTheme.palette.background.default,
@@ -102,7 +102,15 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                 backgroundColor: "inherit",
               }}
             >
-              <Typography variant="h5">{t("yourWebsite")}</Typography>
+              <Typography variant="h5" component={Link}
+                  to="/" sx={{
+                    textDecoration: "none",
+                    color: (theme: Theme) => theme.palette.text.primary, 
+                    fontWeight: "bold", 
+                   
+                  }}>
+                    {t("yourWebsite")}
+                    </Typography>
               <Box
                 sx={{
                   display: "flex",
@@ -113,9 +121,9 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
               >
                 <Box
                   component="img"
-                  src="/logo192.png"
+                  src="./public/Pics/Logo.png"
                   alt="Logo"
-                  sx={{ height: "40px" }}
+                  sx={{ height: "70px" }}
                 />
                 <IconButton
                   onClick={handleDrawerToggle}
@@ -176,9 +184,9 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
 
                 <Box
                   component="img"
-                  src="/logo192.png"
+                  src="./public/Pics/Logo.png"
                   alt="Logo"
-                  sx={{ height: "50px" }}
+                  sx={{ height: "70px" }}
                 />
               </Box>
               <Box

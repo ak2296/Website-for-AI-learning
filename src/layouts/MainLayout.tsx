@@ -160,7 +160,20 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                   backgroundColor: "inherit",
                 }}
               >
-                <Typography variant="h4">{t("yourWebsite")}</Typography>
+                <Typography
+                  component={Link}
+                  to="/"
+                  variant="h4"
+                  sx={{
+                    textDecoration: "none",
+                    color: (theme: Theme) => theme.palette.text.primary, 
+                    fontWeight: "bold", 
+                   
+                  }}
+                >
+                    {t("yourWebsite")}
+                </Typography>
+
                 <Box
                   component="img"
                   src="/logo192.png"

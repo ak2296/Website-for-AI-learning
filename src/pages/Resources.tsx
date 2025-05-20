@@ -92,7 +92,7 @@ export default function Resources() {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Typography variant="h3" gutterBottom>
+        <Typography variant="h3" gutterBottom sx={{ mb: 4 }}>
           Resources
         </Typography>
 

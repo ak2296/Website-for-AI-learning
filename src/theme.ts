@@ -67,7 +67,7 @@ const createAppTheme = (mode: "light" | "dark") => {
     },
     palette,
     typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontFamily: "'Inter', 'Poppins', 'Roboto', sans-serif",
       h1: { fontSize: "2.5rem", fontWeight: 700 },
       h2: { fontSize: "2rem", fontWeight: 600 },
       h3: { fontSize: "1.75rem", fontWeight: 500 },

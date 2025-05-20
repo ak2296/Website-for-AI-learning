@@ -15,7 +15,7 @@ export default function About() {
     transition={{ duration: 0.5 }}
   >
     <Container maxWidth="xl" sx={{ mt: 4 }}>
-      <Typography variant="h3" gutterBottom>
+      <Typography variant="h3" gutterBottom sx={{ mb: 4 }} >
         {t("about")}
       </Typography>
       <Typography variant="body1">

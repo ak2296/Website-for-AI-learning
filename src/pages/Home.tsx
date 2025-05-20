@@ -46,7 +46,7 @@ export default function Home() {
           <Box sx={{ flex: 1 }}>
             <Box
               component="img"
-              src="./Pics/AI-1.webp"
+              src="../Pics/AI-1.webp"
               alt="AI and Technology Illustration"
               sx={{
                 width: "100%",

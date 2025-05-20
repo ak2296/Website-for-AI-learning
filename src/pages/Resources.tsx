@@ -10,63 +10,64 @@ import {
   useMediaQuery,
   Grid,
 } from "@mui/material";
-import type { GridProps } from "@mui/material/Grid"; 
+import type { GridProps } from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
+// Define the Resource type matching your backend API response
 type Resource = {
   id: number;
   title: string;
   body: string;
 };
 
+// Update this function to call your actual API endpoint.
+// For example, if your API is hosted on localhost:5000, you might use "http://localhost:5000/api/resources".
 const fetchResources = async (): Promise<Resource[]> => {
-  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const response = await fetch("http://localhost:5000/api/resources");
   if (!response.ok) throw new Error("Failed to fetch resources");
   return await response.json();
 };
 
 export default function Resources() {
+  // Use react-query to fetch data from the API.
   const { data, error, isLoading } = useQuery<Resource[]>({
     queryKey: ["resources"],
     queryFn: fetchResources,
   });
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // <600px
-  const isMedium = useMediaQuery(theme.breakpoints.between("sm", "lg")); // 600px–1199px
-  const isLarge = useMediaQuery(theme.breakpoints.between("lg", "xl")); // 1200px–1535px
-  
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.between("sm", "lg"));
+  const isLarge = useMediaQuery(theme.breakpoints.between("lg", "xl"));
+
   const [activeStep, setActiveStep] = useState(0);
 
   if (isLoading) return <CircularProgress />;
   if (error instanceof Error)
     return <Typography color="error">Error: {error.message}</Typography>;
 
+  // Determine how many cards per row and rows per page based on screen size.
   const cardsPerRow = isMobile
-    ? 1 // xs: 1 box per row (<600px)
+    ? 1
     : isMedium
-    ? 2 // sm/md: 2 boxes per row (600px–1199px)
+    ? 2
     : isLarge
-    ? 3 // lg: 3 boxes per row
-    : 4; // xl: 4 boxes per row
+    ? 3
+    : 4;
 
-  const rowsPerPage = isMobile
-    ? 6 // xs: 6 rows
-    : isMedium
-    ? 3 // sm/md: 3 rows
-    : isLarge
-    ? 2 // lg: 2 rows
-    : 2; // xl: 2 rows
+  const rowsPerPage = isMobile ? 6 : isMedium ? 3 : isLarge ? 2 : 2;
 
+  // Calculate the total cards per page.
   const cardsPerPage = useMemo(
     () => cardsPerRow * rowsPerPage,
     [cardsPerRow, rowsPerPage]
   );
 
+  // Group the fetched data (resources) into pages.
   const groupedData: Resource[][] = useMemo(() => {
     const groups: Resource[][] = [];
     for (let i = 0; i < (data ?? []).length; i += cardsPerPage) {
@@ -97,7 +98,9 @@ export default function Resources() {
           Resources
         </Typography>
 
-        <Grid container spacing={2}
+        <Grid
+          container
+          spacing={2}
           sx={{
             justifyContent: isMobile ? "center" : "space-between",
             alignItems: "stretch",
@@ -112,7 +115,9 @@ export default function Resources() {
                 md={6}
                 lg={4}
                 xl={3}
-                key={resource.id} component="div" {...({ item: true } as GridProps)}
+                key={resource.id}
+                component="div"
+                {...({ item: true } as GridProps)}
                 sx={{
                   flex: "0 0 auto",
                   width: {
@@ -214,6 +219,7 @@ export default function Resources() {
             ))}
         </Grid>
 
+        {/* Pagination Controls */}
         <div
           style={{
             display: "flex",
@@ -238,7 +244,7 @@ export default function Resources() {
                   theme.palette.mode === "dark"
                     ? "rgba(255, 255, 255, 0.1)"
                     : theme.palette.primary.light,
-                    color:"white",
+                color: "white",
               },
               [theme.breakpoints.down("sm")]: {
                 fontSize: "0.8rem",
@@ -326,7 +332,7 @@ export default function Resources() {
                   theme.palette.mode === "dark"
                     ? "rgba(255, 255, 255, 0.1)"
                     : theme.palette.primary.light,
-                    color:"white",
+                color: "white",
               },
               [theme.breakpoints.down("sm")]: {
                 fontSize: "0.8rem",

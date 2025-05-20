@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Container,
@@ -10,6 +10,7 @@ import {
   useMediaQuery,
   Grid,
 } from "@mui/material";
+import type { GridProps } from "@mui/material/Grid"; 
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
@@ -38,7 +39,7 @@ export default function Resources() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // <600px
   const isMedium = useMediaQuery(theme.breakpoints.between("sm", "lg")); // 600px–1199px
   const isLarge = useMediaQuery(theme.breakpoints.between("lg", "xl")); // 1200px–1535px
-  const isExtraLarge = useMediaQuery(theme.breakpoints.up("xl")); // ≥1536px
+  
   const [activeStep, setActiveStep] = useState(0);
 
   if (isLoading) return <CircularProgress />;
@@ -96,9 +97,7 @@ export default function Resources() {
           Resources
         </Typography>
 
-        <Grid
-          container
-          spacing={2}
+        <Grid container spacing={2}
           sx={{
             justifyContent: isMobile ? "center" : "space-between",
             alignItems: "stretch",
@@ -113,7 +112,7 @@ export default function Resources() {
                 md={6}
                 lg={4}
                 xl={3}
-                key={resource.id}
+                key={resource.id} component="div" {...({ item: true } as GridProps)}
                 sx={{
                   flex: "0 0 auto",
                   width: {

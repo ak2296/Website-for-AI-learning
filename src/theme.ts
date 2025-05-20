@@ -1,3 +1,4 @@
+// src/theme.ts (unchanged)
 import { createTheme } from "@mui/material/styles";
 import type { Shadows } from "@mui/material/styles";
 
@@ -20,9 +21,7 @@ declare module "@mui/material/styles" {
   }
 }
 
-// Function to create the theme dynamically based on the mode
 const createAppTheme = (mode: "light" | "dark") => {
-  // Get default MUI shadows for dark mode
   const defaultShadows = createTheme({ palette: { mode: "dark" } }).shadows;
 
   const palette = {
@@ -48,7 +47,7 @@ const createAppTheme = (mode: "light" | "dark") => {
       secondary: mode === "dark" ? "#b0b0b0" : "#757575",
     },
     header: {
-      main: mode === "dark" ? "#121212" : "#fff", // Match background.default
+      main: mode === "dark" ? "#121212" : "#fff",
     },
     footer: {
       main: mode === "dark" ? "#1e1e1e" : "#2c387e",

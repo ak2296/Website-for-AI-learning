@@ -1,10 +1,8 @@
 // src/pages/About.tsx
-import React from "react";
 import { useTranslation } from "react-i18next";
-import { Container, Typography,  Box, Divider } from "@mui/material";
-import Grid from "@mui/material/Grid";
-
+import { Container, Typography, Box, Divider, Grid } from "@mui/material";
 import { motion } from "framer-motion";
+import type { GridProps } from "@mui/material/Grid";
 
 export default function About() {
   const { t } = useTranslation();
@@ -17,11 +15,9 @@ export default function About() {
       transition={{ duration: 0.5 }}
     >
       <Container maxWidth="xl" sx={{ mt: 4, mb: 6 }}>
-        {/* Header */}
-
         {/* Mission & Vision Section */}
         <Grid container spacing={4} sx={{ my: 4 }}>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={12} component="div" {...({ item: true } as GridProps)}>
             <Box sx={{ mb: 4 }}>
               <Typography variant="h5" gutterBottom>
                 {t("ourMission", "Our Mission")}
@@ -34,7 +30,7 @@ export default function About() {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={12} component="div" {...({ item: true } as GridProps)}>
             <Box sx={{ mb: 4 }}>
               <Typography variant="h5" gutterBottom>
                 {t("ourVision", "Our Vision")}
@@ -43,7 +39,6 @@ export default function About() {
                 {t(
                   "ourVisionDescription",
                   "Fostering a tech-forward workforce equipped with the skills and insights needed to thrive in a digital age."
-
                 )}
               </Typography>
             </Box>
@@ -75,4 +70,3 @@ export default function About() {
     </motion.div>
   );
 }
-

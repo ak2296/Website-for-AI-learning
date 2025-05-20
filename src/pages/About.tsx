@@ -18,9 +18,6 @@ export default function About() {
     >
       <Container maxWidth="xl" sx={{ mt: 4, mb: 6 }}>
         {/* Header */}
-       
-    
-   
 
         {/* Mission & Vision Section */}
         <Grid container spacing={4} sx={{ my: 4 }}>

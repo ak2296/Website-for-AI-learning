@@ -15,7 +15,7 @@ import { Helmet } from "react-helmet";
 const queryClient = new QueryClient();
 
 function Root() {
-  const [mode, setMode] = useState<"light" | "dark">("light");
+  const [mode] = useState<"light" | "dark">("light");
   const theme = createAppTheme(mode); // Create Theme object
 
   return (

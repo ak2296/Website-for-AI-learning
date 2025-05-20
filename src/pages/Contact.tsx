@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Container, Typography, Box, TextField, Button } from "@mui/material";
 import { motion } from "framer-motion";

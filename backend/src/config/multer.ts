@@ -1,7 +1,6 @@
 import multer from 'multer';
 import path from 'path';
 
-// Set up storage for uploaded files
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'src/uploads/');
@@ -12,7 +11,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter to allow only specific file types
 const fileFilter = (req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4'];
   if (allowedTypes.includes(file.mimetype)) {

@@ -160,14 +160,14 @@ export default function Resources() {
                   }}
                 >
                   {resource.mediaType.startsWith('image/') && (
-  <CardMedia
-    component="img"
-    height="100"
-    image={`/uploads/${resource.filePath.split(/[\\/]/).pop()}`}
-    alt={resource.title}
-    onError={() => console.log(`Image failed to load: /uploads/${resource.filePath.split(/[\\/]/).pop()}`)}
-  />
-)}
+                    <CardMedia
+                      component="img"
+                      height="100"
+                      image={`/uploads/${resource.filePath.split(/[\\/]/).pop()}`}
+                      alt={resource.title}
+                      onError={() => console.log(`Image failed to load: /uploads/${resource.filePath.split(/[\\/]/).pop()}`)}
+                    />
+                  )}
                   <CardContent
                     sx={{
                       width: "100%",

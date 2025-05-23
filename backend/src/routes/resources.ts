@@ -1,22 +1,38 @@
-import express, { Request, Response, RequestHandler } from 'express';
+import express, { Request, Response, RequestHandler, NextFunction } from 'express';
 import Resource from '../models/resource';
 import { upload } from '../config/multer';
-
+import multer from 'multer';
 const router = express.Router();
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
 
+const handleMulterError = (err: any, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof multer.MulterError) {
+    console.error('Multer error:', err.message, err.stack);
+    res.status(400).json({ error: `Multer error: ${err.message}` });
+  } else if (err) {
+    console.error('Other upload error:', err.message, err.stack);
+    res.status(400).json({ error: `Upload error: ${err.message}` });
+  } else {
+    next();
+  }
+};
+
 router.post(
   '/',
+  (req: Request, res: Response, next: NextFunction) => {
+    console.log('POST /api/resources received - before Multer');
+    next();
+  },
   upload.single('file') as RequestHandler,
+  handleMulterError,
   async (req: MulterRequest, res: Response): Promise<void> => {
-    console.log('POST /api/resources received');
+    console.log('POST /api/resources received - after Multer');
     try {
       console.log('Raw body:', req.body);
       console.log('File:', req.file);
-      console.log('File buffer size:', req.file?.buffer?.length || 'No buffer'); // Log buffer size if available
 
       const { title, description, mediaType } = req.body;
       const filePath = req.file?.path;
@@ -29,7 +45,6 @@ router.post(
         return;
       }
 
-      console.log('Attempting to create resource');
       const resource = await Resource.create({
         title,
         description,

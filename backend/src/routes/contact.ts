@@ -1,15 +1,9 @@
-// backend/src/routes/contact.ts
-import { Router } from 'express';
+import express, { Request, Response } from 'express';
 
-const router = Router();
+const router = express.Router();
 
-router.post('/', (req, res) => {
-  const { name, email, message } = req.body;
-  // Here, you might add logic to store the contact info or send an email.
-  res.status(201).json({
-    message: 'Thank you for your message!',
-    data: { name, email, message }
-  });
+router.get('/', (req: Request, res: Response) => {
+  res.json({ message: 'Contact data placeholder' });
 });
 
 export default router;

@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardMedia,
   useMediaQuery,
   Grid,
 } from "@mui/material";
@@ -17,23 +18,35 @@ import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
-// Define the Resource type matching your backend API response
 type Resource = {
   id: number;
   title: string;
-  body: string;
+  description: string;
+  filePath: string;
+  mediaType: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
-// Update this function to call your actual API endpoint.
-// For example, if your API is hosted on localhost:5000, you might use "http://localhost:5000/api/resources".
 const fetchResources = async (): Promise<Resource[]> => {
-  const response = await fetch("http://localhost:5000/api/resources");
-  if (!response.ok) throw new Error("Failed to fetch resources");
-  return await response.json();
+  const response = await fetch("/api/resources", {
+    headers: {
+      'Cache-Control': 'no-cache', // Force fresh data on first load
+    },
+  });
+  console.log('Fetch response:', { status: response.status, ok: response.ok, url: response.url });
+  const text = await response.text();
+  console.log('Response text:', text);
+  if (!response.ok && response.status !== 304) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  if (response.status === 304) {
+    return []; // Return empty array for 304; browser will use cache
+  }
+  return text ? JSON.parse(text) : [];
 };
 
 export default function Resources() {
-  // Use react-query to fetch data from the API.
   const { data, error, isLoading } = useQuery<Resource[]>({
     queryKey: ["resources"],
     queryFn: fetchResources,
@@ -50,24 +63,10 @@ export default function Resources() {
   if (error instanceof Error)
     return <Typography color="error">Error: {error.message}</Typography>;
 
-  // Determine how many cards per row and rows per page based on screen size.
-  const cardsPerRow = isMobile
-    ? 1
-    : isMedium
-    ? 2
-    : isLarge
-    ? 3
-    : 4;
-
+  const cardsPerRow = isMobile ? 1 : isMedium ? 2 : isLarge ? 3 : 4;
   const rowsPerPage = isMobile ? 6 : isMedium ? 3 : isLarge ? 2 : 2;
+  const cardsPerPage = useMemo(() => cardsPerRow * rowsPerPage, [cardsPerRow, rowsPerPage]);
 
-  // Calculate the total cards per page.
-  const cardsPerPage = useMemo(
-    () => cardsPerRow * rowsPerPage,
-    [cardsPerRow, rowsPerPage]
-  );
-
-  // Group the fetched data (resources) into pages.
   const groupedData: Resource[][] = useMemo(() => {
     const groups: Resource[][] = [];
     for (let i = 0; i < (data ?? []).length; i += cardsPerPage) {
@@ -160,6 +159,15 @@ export default function Resources() {
                     boxShadow: theme.shadows[8],
                   }}
                 >
+                  {resource.mediaType.startsWith('image/') && (
+  <CardMedia
+    component="img"
+    height="100"
+    image={`/uploads/${resource.filePath.split(/[\\/]/).pop()}`}
+    alt={resource.title}
+    onError={() => console.log(`Image failed to load: /uploads/${resource.filePath.split(/[\\/]/).pop()}`)}
+  />
+)}
                   <CardContent
                     sx={{
                       width: "100%",

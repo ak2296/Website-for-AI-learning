@@ -1,13 +1,9 @@
-// backend/src/routes/home.ts
-import { Router } from 'express';
+import express, { Request, Response } from 'express';
 
-const router = Router();
+const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.json({
-    title: "AI Learning Home",
-    content: "Welcome to our AI Learning platform. Empower your teams and revolutionize training."
-  });
+router.get('/', (req: Request, res: Response) => {
+  res.json({ message: 'Home data placeholder' });
 });
 
 export default router;

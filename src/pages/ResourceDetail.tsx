@@ -1,25 +1,28 @@
 import React from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
-import { Container, Typography, CircularProgress, Button, Box, Paper } from "@mui/material"; // 🔷 Added Paper & Box for better structure
-import { useTheme } from "@mui/material/styles"; // 🔷 Import useTheme for styling
+import { useParams, useNavigate } from "react-router-dom";
+import { Container, Typography, CircularProgress, Button, Box, Paper, CardMedia } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 type Resource = {
   id: number;
   title: string;
-  body: string;
+  description: string;
+  filePath: string;
+  mediaType: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
-// Fetch a single resource by ID
 const fetchResource = async (id: string): Promise<Resource> => {
-  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
-  if (!response.ok) throw new Error("Failed to fetch resource");
+  const response = await fetch(`/api/resources/${id}`);
+  if (!response.ok) throw new Error(`Failed to fetch resource: ${response.status}`);
   return await response.json();
 };
 
 export default function ResourceDetail() {
-  const { id } = useParams<{ id: string }>(); 
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const theme = useTheme(); // 🔷 Theme for styling
+  const theme = useTheme();
   const [resource, setResource] = React.useState<Resource | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -50,7 +53,6 @@ export default function ResourceDetail() {
 
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
-     
       <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 2 }}>
         <Button
           variant="contained"
@@ -61,10 +63,10 @@ export default function ResourceDetail() {
             py: 1,
             borderRadius: "8px",
             fontWeight: "bold",
-            boxShadow: theme.shadows[4], 
+            boxShadow: theme.shadows[4],
             "&:hover": {
               backgroundColor: theme.palette.primary.dark,
-              transform: "scale(1.05)",  
+              transform: "scale(1.05)",
             },
             transition: "0.3s ease-in-out",
           }}
@@ -73,19 +75,36 @@ export default function ResourceDetail() {
         </Button>
       </Box>
 
-      {/*  Wrapped Resource Details in Paper*/}
-     <Paper
-  elevation={6} // 
-  sx={{
-    p: 4, 
-    mb: 4, 
-    borderRadius: "12px", // 
-    boxShadow: (theme) => theme.shadows[6],  // 
-  }}
->
-
+      <Paper
+        elevation={6}
+        sx={{
+          p: 4,
+          mb: 4,
+          borderRadius: "12px",
+          boxShadow: (theme) => theme.shadows[6],
+        }}
+      >
+       {resource.mediaType.startsWith('image/') && (
+  <CardMedia
+    component="img"
+    height="300"
+    image={`/uploads/${resource.filePath.split(/[\\/]/).pop()}`}
+    alt={resource.title}
+    sx={{ marginBottom: 2 }}
+    onError={() => console.log(`Image failed to load: /uploads/${resource.filePath.split(/[\\/]/).pop()}`)}
+  />
+)}
         <Typography variant="h4" gutterBottom>{resource.title}</Typography>
-        <Typography variant="body1">{resource.body}</Typography>
+        <Typography variant="body1" paragraph>{resource.description}</Typography>
+        <Typography variant="body2" color="textSecondary">
+          Media Type: {resource.mediaType}
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          Created At: {new Date(resource.createdAt).toLocaleString()}
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          Updated At: {new Date(resource.updatedAt).toLocaleString()}
+        </Typography>
       </Paper>
     </Container>
   );

@@ -1,3 +1,4 @@
+// src/app.ts
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -13,12 +14,28 @@ dotenv.config();
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
 
+// Raw body logger (before parsing)
+app.use((req: Request, res: Response, next: NextFunction) => {
+  let data = '';
+  req.on('data', chunk => {
+    data += chunk.toString();
+  });
+  req.on('end', () => {
+    console.log('Raw request body:', data);
+  });
+  next();
+});
+
 // Middleware
 app.use(cors({ origin: 'http://localhost:5173' }));
-app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse urlencoded bodies
+app.use(express.json({ strict: true })); // Parse JSON bodies with strict mode
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
   console.log('Headers:', req.headers);
+  if (req.body) {
+    console.log('Parsed body (after parsing):', req.body);
+  }
   next();
 });
 
@@ -37,7 +54,7 @@ app.get('/api', (req: Request, res: Response) => {
 });
 
 // Sync database
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync({ force: false }).then(() => {
   console.log('Database synced');
 }).catch((err) => {
   console.error('Database sync failed:', err);
@@ -46,10 +63,12 @@ sequelize.sync({ force: true }).then(() => {
 // Error handler
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('Server error:', err.stack);
-  res.status(500).json({ error: 'Something went wrong' });
+  res.status(500).json({ error: 'Something went wrong', details: err.message });
 });
 
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+export default app;

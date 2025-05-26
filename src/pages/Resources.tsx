@@ -11,7 +11,6 @@ import {
   useMediaQuery,
   Grid,
 } from "@mui/material";
-import type { GridProps } from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
@@ -31,12 +30,16 @@ type Resource = {
 const fetchResources = async (): Promise<Resource[]> => {
   const response = await fetch("/api/resources", {
     headers: {
-      'Cache-Control': 'no-cache', // Force fresh data on first load
+      "Cache-Control": "no-cache", // Force fresh data on first load
     },
   });
-  console.log('Fetch response:', { status: response.status, ok: response.ok, url: response.url });
+  console.log("Fetch response:", {
+    status: response.status,
+    ok: response.ok,
+    url: response.url,
+  });
   const text = await response.text();
-  console.log('Response text:', text);
+  console.log("Response text:", text);
   if (!response.ok && response.status !== 304) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
@@ -47,27 +50,28 @@ const fetchResources = async (): Promise<Resource[]> => {
 };
 
 export default function Resources() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.between("sm", "lg"));
+  const isLarge = useMediaQuery(theme.breakpoints.between("lg", "xl"));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+  const cardsPerRow = isMobile ? 1 : isMedium ? 2 : isLarge ? 3 : 4;
+  const rowsPerPage = isMobile ? 6 : isMedium ? 3 : isLarge ? 2 : 2;
+  const cardsPerPage = useMemo(
+    () => cardsPerRow * rowsPerPage,
+    [cardsPerRow, rowsPerPage]
+  );
+
+  const [activeStep, setActiveStep] = useState(0);
+
   const { data, error, isLoading } = useQuery<Resource[]>({
     queryKey: ["resources"],
     queryFn: fetchResources,
   });
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isMedium = useMediaQuery(theme.breakpoints.between("sm", "lg"));
-  const isLarge = useMediaQuery(theme.breakpoints.between("lg", "xl"));
-
-  const [activeStep, setActiveStep] = useState(0);
-
-  if (isLoading) return <CircularProgress />;
-  if (error instanceof Error)
-    return <Typography color="error">Error: {error.message}</Typography>;
-
-  const cardsPerRow = isMobile ? 1 : isMedium ? 2 : isLarge ? 3 : 4;
-  const rowsPerPage = isMobile ? 6 : isMedium ? 3 : isLarge ? 2 : 2;
-  const cardsPerPage = useMemo(() => cardsPerRow * rowsPerPage, [cardsPerRow, rowsPerPage]);
-
-  const groupedData: Resource[][] = useMemo(() => {
+  const groupedData = useMemo(() => {
     const groups: Resource[][] = [];
     for (let i = 0; i < (data ?? []).length; i += cardsPerPage) {
       groups.push((data ?? []).slice(i, i + cardsPerPage));
@@ -85,6 +89,13 @@ export default function Resources() {
     setActiveStep((prev) => Math.max(prev - 1, 0));
   };
 
+  const visibleRange = isSmallScreen ? 2 : isMediumScreen ? 3 : 4;
+  const dotSize = isSmallScreen ? 8 : 10;
+
+  if (isLoading) return <CircularProgress />;
+  if (error instanceof Error)
+    return <Typography color="error">Error: {error.message}</Typography>;
+
   return (
     <Container maxWidth={false} sx={{ mt: 4, px: 0 }}>
       <motion.div
@@ -101,37 +112,30 @@ export default function Resources() {
           container
           spacing={2}
           sx={{
-            justifyContent: isMobile ? "center" : "space-between",
+            justifyContent: isMobile ? "center" : "center",
             alignItems: "stretch",
           }}
         >
           {groupedData[activeStep] &&
             groupedData[activeStep].map((resource) => (
               <Grid
-                item
-                xs={12}
-                sm={6}
-                md={6}
-                lg={4}
-                xl={3}
                 key={resource.id}
                 component="div"
-                {...({ item: true } as GridProps)}
                 sx={{
                   flex: "0 0 auto",
                   width: {
                     xs: "min(90vw, 450px)",
                     sm: "calc(50% - 8px)",
                     md: "calc(50% - 8px)",
-                    lg: "calc(33.3333% - 10.6666px)",
-                    xl: "calc(25% - 12px)",
+                    lg: "calc(30%)",
+                    xl: "calc(30% - 12px)",
                   },
                   minWidth: {
                     xs: "min(90vw, 450px)",
                     sm: "min(45%, 350px)",
                     md: "min(45%, 350px)",
                     lg: "min(30%, 300px)",
-                    xl: "min(22%, 300px)",
+                    xl: "min(30%, 300px)",
                   },
                   display: "flex",
                   justifyContent: "center",
@@ -159,14 +163,27 @@ export default function Resources() {
                     boxShadow: theme.shadows[8],
                   }}
                 >
-                  {resource.mediaType.startsWith('image/') && (
-                    <CardMedia
-                      component="img"
-                      height="100"
-                      image={`/uploads/${resource.filePath.split(/[\\/]/).pop()}`}
-                      alt={resource.title}
-                      onError={() => console.log(`Image failed to load: /uploads/${resource.filePath.split(/[\\/]/).pop()}`)}
-                    />
+                  {resource.filePath && resource.mediaType && (
+                    (resource.mediaType
+                      .replace(/^"|"$/g, "")
+                      .startsWith("image/") ||
+                      /\.(png|jpg|jpeg|gif)$/i.test(resource.filePath)) && (
+                      <CardMedia
+                        component="img"
+                        height="100"
+                        image={`/uploads/${resource.filePath
+                          .split(/[\\/]/)
+                          .pop()}`}
+                        alt={resource.title}
+                        onError={() =>
+                          console.log(
+                            `Image failed to load: /uploads/${resource.filePath
+                              .split(/[\\/]/)
+                              .pop()}`
+                          )
+                        }
+                      />
+                    )
                   )}
                   <CardContent
                     sx={{
@@ -227,7 +244,6 @@ export default function Resources() {
             ))}
         </Grid>
 
-        {/* Pagination Controls */}
         <div
           style={{
             display: "flex",
@@ -277,53 +293,45 @@ export default function Resources() {
               flexWrap: "wrap",
             }}
           >
-            {(() => {
-              const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-              const isMediumScreen = useMediaQuery(
-                theme.breakpoints.between("sm", "md")
-              );
-              const visibleRange = isSmallScreen ? 2 : isMediumScreen ? 3 : 4;
+            {Array.from({ length: maxSteps }).map((_, index) => {
+              const isVisible =
+                index === 0 ||
+                index === maxSteps - 1 ||
+                (index >= activeStep - visibleRange &&
+                  index <= activeStep + visibleRange);
 
-              return Array.from({ length: maxSteps }).map((_, index) => {
-                const isVisible =
-                  index === 0 ||
-                  index === maxSteps - 1 ||
-                  (index >= activeStep - visibleRange &&
-                    index <= activeStep + visibleRange);
-
-                if (!isVisible) {
-                  if (
-                    (index === activeStep - visibleRange - 1 &&
-                      activeStep > visibleRange) ||
-                    (index === activeStep + visibleRange + 1 &&
-                      activeStep < maxSteps - visibleRange - 1)
-                  ) {
-                    return <span key={index}>...</span>;
-                  }
-                  return null;
+              if (!isVisible) {
+                if (
+                  (index === activeStep - visibleRange - 1 &&
+                    activeStep > visibleRange) ||
+                  (index === activeStep + visibleRange + 1 &&
+                    activeStep < maxSteps - visibleRange - 1)
+                ) {
+                  return <span key={index}>...</span>;
                 }
+                return null;
+              }
 
-                return (
-                  <span
-                    key={index}
-                    onClick={() => setActiveStep(index)}
-                    style={{
-                      width: isSmallScreen ? 8 : 10,
-                      height: isSmallScreen ? 8 : 10,
-                      borderRadius: "50%",
-                      backgroundColor:
-                        activeStep === index
-                          ? theme.palette.mode === "dark"
-                            ? "#ff9800"
-                            : theme.palette.primary.main
-                          : theme.palette.grey[400],
-                      cursor: "pointer",
-                      transition: "background-color 0.3s",
-                    }}
-                  />
-                );
-              });
-            })()}
+              return (
+                <span
+                  key={index}
+                  onClick={() => setActiveStep(index)}
+                  style={{
+                    width: dotSize,
+                    height: dotSize,
+                    borderRadius: "50%",
+                    backgroundColor:
+                      activeStep === index
+                        ? theme.palette.mode === "dark"
+                          ? "#ff9800"
+                          : theme.palette.primary.main
+                        : theme.palette.grey[400],
+                    cursor: "pointer",
+                    transition: "background-color 0.3s",
+                  }}
+                />
+              );
+            })}
           </div>
 
           <Button

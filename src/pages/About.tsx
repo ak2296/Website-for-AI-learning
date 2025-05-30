@@ -30,6 +30,9 @@ export default function About() {
     queryFn: fetchAbout,
   });
 
+  // Log screen width for debugging
+  console.log("Window width:", window.innerWidth);
+
   if (isLoading) return <CircularProgress />;
   if (error) return <Typography color="error">Error: {(error as Error).message}</Typography>;
 
@@ -40,74 +43,78 @@ export default function About() {
       exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.5 }}
     >
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 6 }}>
+      <Container maxWidth={false} sx={{ mt: 4, mb: 6, px: { xs: 2, md: 4 } }}>
         {/* Mission & Vision Section */}
-        {entry && entry.id ? (
-          <Grid container spacing={4} sx={{ my: 4 }}>
-            <Grid item xs={12} md={12} component="div" {...({ item: true } as GridProps)}>
+        <Grid
+          container
+          spacing={4}
+          sx={{
+            my: 4,
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "flex-start", // Align items to the top
+          }}
+        >
+          {/* Left Column: Mission and Vision */}
+          <Grid
+            item
+            xs={12}
+            md={6}
+            component="div"
+            {...({ item: true } as GridProps)}
+            sx={{ pr: { md: 4 } }} // Padding-right to separate text from image
+          >
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h5" gutterBottom>
+                {entry?.id && entry.title ? entry.title : t("ourMission", "Our Mission")}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {entry?.id && entry.content ? entry.content : t("ourMissionDescription", "Empowering companies to harness AI through innovative training and modern technology.")}
+              </Typography>
+            </Box>
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h5" gutterBottom>
+                {t("ourVision", "Our Vision")}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t("ourVisionDescription", "Fostering a tech-forward workforce equipped with the skills and insights needed to thrive in a digital age.")}
+              </Typography>
+            </Box>
+          </Grid>
+          {/* Right Column: Image */}
+          {entry?.imagePath && (
+            <Grid
+              item
+              xs={12}
+              md={6}
+              component="div"
+              {...({ item: true } as GridProps)}
+              sx={{ pl: 0, pr: 0 }} // Remove padding to control spacing manually
+            >
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: { xs: "column", sm: "row", md: "row" },
-                  alignItems: "center",
-                  justifyContent: { xs: "center", sm: "space-between", md: "space-between" },
-                  mb: 4,
+                  justifyContent: "center", // Center the image within the Grid item
                 }}
               >
-                <Box sx={{ flex: 1, pr: { md: 4 } }}>
-                  <Typography variant="h5" gutterBottom>
-                    {entry.title || t("ourMission", "Our Mission")}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {entry.content || t("ourMissionDescription", "Empowering companies to harness AI through innovative training and modern technology.")}
-                  </Typography>
-                </Box>
-                {entry.imagePath && (
-                  <Box sx={{ flex: 1 }}>
-                    <Box
-                      component="img"
-                      src={`http://localhost:5000/uploads/${entry.imagePath}?t=${new Date().getTime()}`}
-                      alt={entry.title}
-                      sx={{
-                        width: "100%",
-                        maxWidth: "50%", // Limit maximum width
-                        height: "auto", // Maintain aspect ratio
-                        mt: { xs: 4, sm: 0, md: 0 },
-                        borderRadius: 2,
-                        boxShadow: "none",
-                        ml: { sm: 5 }, // Margin for spacing
-                      }}
-                      onError={(e) => console.log(`Image failed to load: http://localhost:5000/uploads/${entry.imagePath}`)}
-                    />
-                  </Box>
-                )}
+                <Box
+                  component="img"
+                  src={`http://localhost:5000/uploads/${entry.imagePath}?t=${new Date().getTime()}`}
+                  alt={entry?.title || "About Image"}
+                  sx={{
+                    width: "100%", // Full width of the Grid item
+                    height: "auto", // Maintain aspect ratio
+                    maxHeight: "300px", // Limit vertical size
+                    borderRadius: 2,
+                    boxShadow: "none",
+                    mx: 2, // Equal margin on both sides (16px)
+                  }}
+                  onError={(e) => console.log(`Image failed to load: http://localhost:5000/uploads/${entry.imagePath}`)}
+                />
               </Box>
             </Grid>
-          </Grid>
-        ) : (
-          <Grid container spacing={4} sx={{ my: 4 }}>
-            <Grid item xs={12} md={12} component="div" {...({ item: true } as GridProps)}>
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h5" gutterBottom>
-                  {t("ourMission", "Our Mission")}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {t("ourMissionDescription", "Empowering companies to harness AI through innovative training and modern technology.")}
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={12} component="div" {...({ item: true } as GridProps)}>
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h5" gutterBottom>
-                  {t("ourVision", "Our Vision")}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {t("ourVisionDescription", "Fostering a tech-forward workforce equipped with the skills and insights needed to thrive in a digital age.")}
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-        )}
+          )}
+        </Grid>
 
         <Divider sx={{ my: 4 }} />
 

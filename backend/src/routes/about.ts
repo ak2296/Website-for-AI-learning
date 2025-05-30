@@ -1,4 +1,3 @@
-// src/routes/about.ts
 import express, { Request, Response, NextFunction, RequestHandler } from 'express';
 import About from '../models/about';
 import { upload } from '../config/multer';
@@ -66,8 +65,8 @@ router.post(
       let aboutEntry = await About.findOne({ order: [['id', 'ASC']] });
       if (!aboutEntry) {
         aboutEntry = await About.create({
-          title: title !== undefined ? title : 'Default Title',
-          content: content !== undefined ? content : 'Default Content',
+          title: title || null,
+          content: content || null,
           imagePath,
         });
       } else {
@@ -83,8 +82,8 @@ router.post(
         }
 
         await aboutEntry.update({
-          title: title !== undefined ? title : aboutEntry.title,
-          content: content !== undefined ? content : aboutEntry.content,
+          title: title || null,
+          content: content || null,
           imagePath,
           updatedAt: new Date(),
         });

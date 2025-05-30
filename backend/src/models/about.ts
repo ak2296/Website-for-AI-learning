@@ -2,9 +2,9 @@ import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 interface AboutAttributes {
   id: number;
-  title?: string;
-  content?: string;
-  imagePath?: string;
+  title?: string | null;
+  content?: string | null;
+  imagePath: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -13,9 +13,9 @@ interface AboutCreationAttributes extends Optional<AboutAttributes, 'id'> {}
 
 class About extends Model<AboutAttributes, AboutCreationAttributes> implements AboutAttributes {
   public id!: number;
-  public title?: string;
-  public content?: string;
-  public imagePath?: string;
+  public title!: string | null;
+  public content!: string | null;
+  public imagePath!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -32,12 +32,12 @@ class About extends Model<AboutAttributes, AboutCreationAttributes> implements A
           allowNull: true,
         },
         content: {
-          type: DataTypes.TEXT,
+          type: DataTypes.STRING,
           allowNull: true,
         },
         imagePath: {
           type: DataTypes.STRING,
-          allowNull: true,
+          allowNull: false,
         },
       },
       {

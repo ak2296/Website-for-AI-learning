@@ -1,28 +1,26 @@
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
-interface ResourceAttributes {
+interface AboutAttributes {
   id: number;
   title?: string;
-  description?: string;
-  filePath?: string;
-  mediaType?: string;
+  content?: string;
+  imagePath?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface ResourceCreationAttributes extends Optional<ResourceAttributes, 'id'> {}
+interface AboutCreationAttributes extends Optional<AboutAttributes, 'id'> {}
 
-class Resource extends Model<ResourceAttributes, ResourceCreationAttributes> implements ResourceAttributes {
+class About extends Model<AboutAttributes, AboutCreationAttributes> implements AboutAttributes {
   public id!: number;
   public title?: string;
-  public description?: string;
-  public filePath?: string;
-  public mediaType?: string;
+  public content?: string;
+  public imagePath?: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
   static initModel(sequelize: Sequelize): void {
-    Resource.init(
+    About.init(
       {
         id: {
           type: DataTypes.INTEGER,
@@ -33,26 +31,22 @@ class Resource extends Model<ResourceAttributes, ResourceCreationAttributes> imp
           type: DataTypes.STRING,
           allowNull: true,
         },
-        description: {
+        content: {
           type: DataTypes.TEXT,
           allowNull: true,
         },
-        filePath: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        mediaType: {
+        imagePath: {
           type: DataTypes.STRING,
           allowNull: true,
         },
       },
       {
         sequelize,
-        tableName: 'Resources',
+        tableName: 'about',
         timestamps: true,
       }
     );
   }
 }
 
-export default Resource;
+export default About;

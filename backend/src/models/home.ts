@@ -1,28 +1,28 @@
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
-interface ResourceAttributes {
+interface HomeAttributes {
   id: number;
-  title?: string;
-  description?: string;
-  filePath?: string;
-  mediaType?: string;
+  title?: string | null;
+  content?: string | null;
+  description?: string | null;
+  imagePath?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface ResourceCreationAttributes extends Optional<ResourceAttributes, 'id'> {}
+interface HomeCreationAttributes extends Optional<HomeAttributes, 'id'> {}
 
-class Resource extends Model<ResourceAttributes, ResourceCreationAttributes> implements ResourceAttributes {
+class Home extends Model<HomeAttributes, HomeCreationAttributes> implements HomeAttributes {
   public id!: number;
-  public title?: string;
-  public description?: string;
-  public filePath?: string;
-  public mediaType?: string;
+  public title?: string | null;
+  public content?: string | null;
+  public description?: string | null;
+  public imagePath?: string | null; // Fixed syntax error by removing duplicate 'public'
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
   static initModel(sequelize: Sequelize): void {
-    Resource.init(
+    Home.init(
       {
         id: {
           type: DataTypes.INTEGER,
@@ -33,26 +33,26 @@ class Resource extends Model<ResourceAttributes, ResourceCreationAttributes> imp
           type: DataTypes.STRING,
           allowNull: true,
         },
+        content: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
         description: {
           type: DataTypes.TEXT,
           allowNull: true,
         },
-        filePath: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        mediaType: {
+        imagePath: {
           type: DataTypes.STRING,
           allowNull: true,
         },
       },
       {
         sequelize,
-        tableName: 'Resources',
+        tableName: 'home',
         timestamps: true,
       }
     );
   }
 }
 
-export default Resource;
+export default Home;

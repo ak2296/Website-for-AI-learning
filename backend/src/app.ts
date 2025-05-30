@@ -1,4 +1,3 @@
-// src/app.ts
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -6,69 +5,53 @@ import sequelize from './config/database';
 import resourcesRoutes from './routes/resources';
 import homeRoutes from './routes/home';
 import aboutRoutes from './routes/about';
-import contactRoutes from './routes/contact';
-import { upload } from './config/multer';
 
 dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
 
-// Raw body logger (before parsing)
-app.use((req: Request, res: Response, next: NextFunction) => {
-  let data = '';
-  req.on('data', chunk => {
-    data += chunk.toString();
-  });
-  req.on('end', () => {
-    console.log('Raw request body:', data);
-  });
-  next();
-});
-
-// Middleware
 app.use(cors({ origin: 'http://localhost:5173' }));
-app.use(express.urlencoded({ extended: true })); // Parse urlencoded bodies
-app.use(express.json({ strict: true })); // Parse JSON bodies with strict mode
+app.use(express.json()); // Ensure JSON parsing
+
+// Very early logging to catch all requests
 app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log(`Incoming request: ${req.method} ${req.url}`);
-  console.log('Headers:', req.headers);
-  if (req.body) {
-    console.log('Parsed body (after parsing):', req.body);
-  }
+  console.log('Early request detected:', req.method, req.path);
+  process.stdout.write(''); // Force flush logs
   next();
 });
 
-// Serve uploaded files statically
-app.use('/uploads', express.static('src/uploads'));
-
-// Routes
+console.log('Mounting routes...');
+app.use('/api/resources', resourcesRoutes);
 app.use('/api/home', homeRoutes);
 app.use('/api/about', aboutRoutes);
-app.use('/api/resources', resourcesRoutes);
-app.use('/api/contact', contactRoutes);
+console.log('Routes mounted successfully');
+process.stdout.write(''); // Force flush logs
 
-// Health-check endpoint
+// Serve uploaded files statically with absolute path
+app.use('/uploads', express.static('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads'));
+
+// Global error handler to catch unhandled exceptions
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('Unhandled error:', err.message, err.stack);
+  process.stdout.write(''); // Force flush logs
+  res.status(500).json({ error: 'Internal server error' });
+});
+
 app.get('/api', (req: Request, res: Response) => {
   res.json({ message: 'Welcome to the AI Learning API' });
 });
 
-// Sync database
-sequelize.sync({ force: false }).then(() => {
-  console.log('Database synced');
-}).catch((err) => {
-  console.error('Database sync failed:', err);
-});
-
-// Error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('Server error:', err.stack);
-  res.status(500).json({ error: 'Something went wrong', details: err.message });
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Database connected successfully');
+    console.log(`Server running on port ${PORT}`);
+    process.stdout.write(''); // Force flush logs
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+    process.stdout.write(''); // Force flush logs
+  }
 });
 
 export default app;

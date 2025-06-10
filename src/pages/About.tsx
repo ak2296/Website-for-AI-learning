@@ -52,7 +52,8 @@ export default function About() {
             my: 4,
             display: "flex",
             flexWrap: "wrap",
-            alignItems: "flex-start", // Align items to the top
+            alignItems: "flex-start",
+            justifyContent: "space-between", // Align items to the top
           }}
         >
           {/* Left Column: Mission and Vision */}
@@ -89,7 +90,7 @@ export default function About() {
               md={6}
               component="div"
               {...({ item: true } as GridProps)}
-              sx={{ pl: 0, pr: 0 }} // Remove padding to control spacing manually
+              sx={{ pl: 0, pr: 1}} // Remove padding to control spacing manually
             >
               <Box
                 sx={{
@@ -107,7 +108,8 @@ export default function About() {
                     maxHeight: "300px", // Limit vertical size
                     borderRadius: 2,
                     boxShadow: "none",
-                    mx: 2, // Equal margin on both sides (16px)
+                    ml: 1,
+                    
                   }}
                   onError={(e) => console.log(`Image failed to load: http://localhost:5000/uploads/${entry.imagePath}`)}
                 />

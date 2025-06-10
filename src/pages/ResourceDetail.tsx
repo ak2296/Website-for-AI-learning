@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+    import { useTranslation } from "react-i18next";
+    import React, { useEffect, useState } from "react";
     import { useParams, useNavigate } from "react-router-dom";
     import { Container, Typography, CircularProgress, Button, Box, Paper } from "@mui/material";
     import { useTheme } from "@mui/material/styles";
@@ -27,6 +28,7 @@ import React, { useEffect, useState } from "react";
 
     export default function ResourceDetail() {
       const { id } = useParams<{ id: string }>();
+      const { t } = useTranslation();
       const navigate = useNavigate();
       const theme = useTheme();
       const [resource, setResource] = useState<Resource | null>(null);
@@ -93,7 +95,7 @@ import React, { useEffect, useState } from "react";
             <Box
               component="video"
               controls
-              autoPlay
+              
               sx={{ maxWidth: "100%", borderRadius: 2, mt: 2 }}
             >
               <source src={mediaUrl} type="video/mp4" />
@@ -140,7 +142,7 @@ import React, { useEffect, useState } from "react";
                 transition: "0.3s ease-in-out",
               }}
             >
-              ⬅ Back to Resources
+              ⬅  {t("goback")}
             </Button>
           </Box>
 

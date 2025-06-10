@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo, useCallback, useEffect } from "react";
   import { useQuery } from "@tanstack/react-query";
   import {
@@ -68,6 +69,7 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 
   export default function Resources() {
     const theme = useTheme();
+    const { t } = useTranslation();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const isMedium = useMediaQuery(theme.breakpoints.between("sm", "lg"));
     const isLarge = useMediaQuery(theme.breakpoints.between("lg", "xl"));
@@ -183,7 +185,7 @@ import { useState, useMemo, useCallback, useEffect } from "react";
           transition={{ duration: 0.5 }}
         >
           <Typography variant="h3" gutterBottom sx={{ mb: 4 }}>
-            Resources
+            {t("resources")}
           </Typography>
 
           <Grid
@@ -308,7 +310,7 @@ import { useState, useMemo, useCallback, useEffect } from "react";
                         }),
                       }}
                     >
-                      View More
+                      {t("viewmore")}
                     </Typography>
                   </Card>
                 </Grid>
@@ -323,6 +325,8 @@ import { useState, useMemo, useCallback, useEffect } from "react";
               alignItems: "center",
               gap: "16px",
               marginTop: "16px",
+              minHeight: "100px", // Minimum height to ensure spacing
+              paddingBottom: "16px", // Additional spacing at bottom
             }}
           >
             <Button

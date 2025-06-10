@@ -58,7 +58,7 @@ export default function Home() {
         <Box
           sx={{
             display: "flex",
-            flexDirection: { xs: "column", sm: "row", md: "row" },
+            flexDirection: { xs: "column-reverse", sm: "row", md: "row" },
             alignItems: "center",
             justifyContent: { xs: "center", sm: "space-between", md: "space-between" },
             mb: 6,
@@ -114,10 +114,10 @@ export default function Home() {
           <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600, mx: "auto", mb: 4 }}>
             {t("discoverCuttingEdgeTools")}
           </Typography>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{ justifyContent: "center" }}>
             <Grid
               item
-              sx={{ width: { xs: "100%", sm: "28vw", md: "30vw" } }}
+              sx={{ width: { xs: "100%", sm: "28vw", md: "28vw", lg:"28vw",xl:"22vw" } }}
               component="div"
               {...({ item: true } as GridProps)}
             >
@@ -133,7 +133,7 @@ export default function Home() {
             </Grid>
             <Grid
               item
-              sx={{ width: { xs: "100%", sm: "28vw", md: "30vw" } }}
+              sx={{ width: { xs: "100%", sm: "28vw", md: "28vw", lg:"28vw", xl:"22vw" } }}
               component="div"
               {...({ item: true } as GridProps)}
             >
@@ -149,7 +149,7 @@ export default function Home() {
             </Grid>
             <Grid
               item
-              sx={{ width: { xs: "100%", sm: "28vw", md: "30vw" } }}
+              sx={{ width: { xs: "100%", sm: "28vw", md: "28vw", lg:"28vw",xl:"22vw" } }}
               component="div"
               {...({ item: true } as GridProps)}
             >

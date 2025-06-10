@@ -7,6 +7,8 @@ import CodeIcon from "@mui/icons-material/Code";
 import SchoolIcon from "@mui/icons-material/School";
 import PeopleIcon from "@mui/icons-material/People";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 interface HomeEntry {
   id?: number;
@@ -27,6 +29,7 @@ const fetchHome = async (): Promise<HomeEntry> => {
 export default function Home() {
   const { t } = useTranslation();
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const { data: entry, isLoading } = useQuery({
     queryKey: ["home"],
@@ -74,7 +77,10 @@ export default function Home() {
             <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
               {t("experienceTheSeamlessIntegration")}
             </Typography>
-            <Button variant="contained" size="large">
+            <Button 
+            variant="contained" 
+            size="large"
+            onClick={() => navigate("/resources")}>
               {t("exploreResources")}
             </Button>
           </Box>
@@ -273,7 +279,11 @@ export default function Home() {
           <Typography variant="h4" gutterBottom>
             {t("ReadyTo")}
           </Typography>
-          <Button variant="contained" size="large">
+          <Button 
+          variant="contained" 
+          size="large"
+          onClick={() => navigate("/contact")}
+          >
             {t("GetStarted")}
           </Button>
         </Box>

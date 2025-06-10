@@ -101,7 +101,7 @@ export default function About() {
                 <Box
                   component="img"
                   src={`http://localhost:5000/uploads/${entry.imagePath}?t=${new Date().getTime()}`}
-                  alt={entry?.title || "About Image"}
+                  alt={entry?.title || "/Pics/AI-2.png"}
                   sx={{
                     width: "100%", // Full width of the Grid item
                     height: "auto", // Maintain aspect ratio

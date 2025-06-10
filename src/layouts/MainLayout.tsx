@@ -121,7 +121,7 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
               >
                 <Box
                   component="img"
-                  src="./Pics/Logo.png"
+                  src="/Pics/Logo.png"
                   alt="Logo"
                   sx={{ height: "70px" }}
                 />
@@ -184,7 +184,7 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
 
                 <Box
                   component="img"
-                  src="./Pics/Logo.png"
+                  src="/Pics/Logo.png"
                   alt="Logo"
                   sx={{ height: "70px" }}
                 />

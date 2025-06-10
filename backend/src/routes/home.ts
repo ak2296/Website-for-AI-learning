@@ -8,7 +8,7 @@ import path from 'path';
 import fs from 'fs/promises';
 
 const router = express.Router();
-console.log('Home routes loaded');
+//console.log('Home routes loaded');
 process.stdout.write(''); // Force flush logs
 
 interface HomeRequestBody {

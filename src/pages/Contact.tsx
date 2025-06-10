@@ -66,8 +66,8 @@ export default function Contact() {
         <Typography variant="h3" gutterBottom sx={{ mb: 4 }}>
           {t("contact")}
         </Typography>
-        {success && <Alert severity="success">{t("messageSent")}</Alert>}
-        {error && <Alert severity="error">{error}</Alert>}
+        {success && <Alert severity="success" sx={{mb:1, boxShadow: "none"}}>{t("messageSent")}</Alert>}
+        {error && <Alert severity="error" sx={{mb:1, boxShadow: "none"}}>{error}</Alert>}
         <Box
           component="form"
           onSubmit={handleSubmit}

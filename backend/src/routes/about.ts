@@ -6,7 +6,7 @@ import path from 'path';
 import fs from 'fs/promises';
 
 const router = express.Router();
-console.log('About routes loaded');
+//console.log('About routes loaded');
 
 interface AboutRequestBody {
   title?: string;

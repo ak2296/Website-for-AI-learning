@@ -176,19 +176,25 @@ router.delete('/:id', async (req: Request, res: Response) => {
       return;
     }
 
+    let deletionError = null;
     if (aboutEntry.imagePath) {
-      const imagePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', aboutEntry.imagePath);
+      const imagePath = path.join(process.env.UPLOADS_DIR || 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', aboutEntry.imagePath);
       console.log(`Attempting to delete image at: ${imagePath}`);
       try {
         await fs.unlink(imagePath);
         console.log(`Deleted image: ${aboutEntry.imagePath}`);
-      } catch (err) {
-        console.warn(`Failed to delete image at ${imagePath}:`, err);
+      } catch (err: any) {
+        deletionError = err;
+        console.warn(`Failed to delete image at ${imagePath}:`, err.message);
       }
     }
 
     await aboutEntry.destroy();
-    res.status(204).send();
+    if (deletionError) {
+      res.status(500).json({ error: 'Failed to delete associated image', details: deletionError.message });
+    } else {
+      res.status(204).send();
+    }
   } catch (error: any) {
     console.error('Error deleting about entry:', error.message, error.stack);
     res.status(500).json({ error: 'Failed to delete about entry' });

@@ -180,7 +180,6 @@ router.put(
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     console.log(`Incoming request: DELETE /api/resources/${req.params.id}`);
-    // Parse the resource ID from the URL parameter
     const id = parseInt(req.params.id);
     const resource = await Resource.findByPk(id);
     if (!resource) {
@@ -188,21 +187,25 @@ router.delete('/:id', async (req: Request, res: Response) => {
       return;
     }
 
-    // Delete the associated file from the uploads directory
+    let deletionError = null;
     if (resource.filePath) {
-      const filePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', resource.filePath);
+      const filePath = path.join(process.env.UPLOADS_DIR || 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', resource.filePath);
       console.log(`Attempting to delete file at: ${filePath}`);
       try {
         await fs.unlink(filePath);
         console.log(`Deleted file: ${resource.filePath}`);
-      } catch (err) {
-        console.warn(`Failed to delete file at ${filePath}:`, err);
+      } catch (err: any) {
+        deletionError = err;
+        console.warn(`Failed to delete file at ${filePath}:`, err.message);
       }
     }
 
-    // Remove the resource from the database
     await resource.destroy();
-    res.status(204).send();
+    if (deletionError) {
+      res.status(500).json({ error: 'Failed to delete associated file', details: deletionError.message });
+    } else {
+      res.status(204).send();
+    }
   } catch (error: any) {
     console.error('Error deleting resource:', error.message, error.stack);
     res.status(500).json({ error: 'Failed to delete resource' });

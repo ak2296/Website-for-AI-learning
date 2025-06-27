@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { AnimatePresence } from "framer-motion";
@@ -14,6 +14,8 @@ import About from "./pages/About";
 import Resources from "./pages/Resources";
 import Contact from "./pages/Contact";
 import ResourceDetail from "./pages/ResourceDetail";
+import AdminPanel from "./pages/AdminPanel";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   const location = useLocation();
@@ -52,6 +54,8 @@ export default function App() {
               
             />
             <Route path="contact" element={<Contact />} />
+            <Route path="admin" element={<AdminPanel />} /> 
+            <Route path="/admin/dashboard" element={<Dashboard />} /> 
           </Route>
         </Routes>
       </AnimatePresence>

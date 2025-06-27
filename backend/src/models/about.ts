@@ -1,3 +1,4 @@
+// models/about.ts
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 interface AboutAttributes {
@@ -5,6 +6,7 @@ interface AboutAttributes {
   title?: string | null;
   content?: string | null;
   imagePath: string;
+  mediaType?: string | null; // Add mediaType
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -16,6 +18,7 @@ class About extends Model<AboutAttributes, AboutCreationAttributes> implements A
   public title!: string | null;
   public content!: string | null;
   public imagePath!: string;
+  public mediaType?: string | null; // Add mediaType to the model
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -38,6 +41,10 @@ class About extends Model<AboutAttributes, AboutCreationAttributes> implements A
         imagePath: {
           type: DataTypes.STRING,
           allowNull: false,
+        },
+        mediaType: {
+          type: DataTypes.STRING,
+          allowNull: true, // Optional, matching multer's mimetype
         },
       },
       {

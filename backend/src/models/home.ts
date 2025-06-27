@@ -1,3 +1,4 @@
+// models/home.ts
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 interface HomeAttributes {
@@ -6,6 +7,7 @@ interface HomeAttributes {
   content?: string | null;
   description?: string | null;
   imagePath?: string | null;
+  mediaType?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -17,7 +19,8 @@ class Home extends Model<HomeAttributes, HomeCreationAttributes> implements Home
   public title?: string | null;
   public content?: string | null;
   public description?: string | null;
-  public imagePath?: string | null; // Fixed syntax error by removing duplicate 'public'
+  public imagePath?: string | null;
+  public mediaType?: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -45,11 +48,21 @@ class Home extends Model<HomeAttributes, HomeCreationAttributes> implements Home
           type: DataTypes.STRING,
           allowNull: true,
         },
+        mediaType: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
       },
       {
         sequelize,
         tableName: 'home',
         timestamps: true,
+        indexes: [
+          {
+            unique: true,
+            fields: ['title', 'description', 'imagePath', 'mediaType'],
+          },
+        ],
       }
     );
   }

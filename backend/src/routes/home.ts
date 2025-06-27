@@ -1,4 +1,5 @@
-import express, { Request as ExpressRequest, Response as ExpressResponse, NextFunction, RequestHandler } from 'express';
+// src/routes/home.ts (unchanged from last valid version)
+import express, { Request, Response, NextFunction, RequestHandler, ErrorRequestHandler } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 import Home from '../models/home';
@@ -6,147 +7,163 @@ import { upload } from '../config/multer';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs/promises';
+import { Sequelize } from 'sequelize';
+import { Transaction } from 'sequelize';
 
 const router = express.Router();
-//console.log('Home routes loaded');
-process.stdout.write(''); // Force flush logs
 
 interface HomeRequestBody {
-  title?: string;
-  description?: string;
+  title?: string | null;
+  description?: string | null;
+  content?: string | null;
+  mediaType?: string | null;
 }
 
-interface MulterRequest extends ExpressRequest {
+interface MulterRequest extends Request {
   file?: Express.Multer.File;
   body: HomeRequestBody;
 }
 
-const handleMulterError = (err: any, req: ExpressRequest, res: ExpressResponse, next: NextFunction) => {
+const handleMulterError: ErrorRequestHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof multer.MulterError) {
     console.error('Multer error in Home:', err.message, err.stack);
-    process.stdout.write(''); // Force flush logs
     res.status(400).json({ error: `Multer error: ${err.message}` });
   } else if (err) {
     console.error('Other upload error in Home:', err.message, err.stack);
-    process.stdout.write(''); // Force flush logs
     res.status(400).json({ error: `Upload error: ${err.message}` });
   } else {
     next();
   }
 };
 
-// GET the first home entry (returns 404 if none exists)
-router.get('/', (async (req: ExpressRequest<ParamsDictionary, any, any, ParsedQs>, res: ExpressResponse) => {
+router.get('/', (async (req: Request<ParamsDictionary, any, any, ParsedQs>, res: Response, next: NextFunction) => {
   try {
-    console.log('GET /api/home received - Starting query');
-    process.stdout.write(''); // Force flush logs
-    let homeEntry = await Home.findOne({
-      order: [['id', 'ASC']],
-    });
+    const homeEntry = await Home.findOne({ order: [['id', 'ASC']] });
     if (!homeEntry) {
       console.log('No home entry found, returning 404');
-      process.stdout.write(''); // Force flush logs
       return res.status(404).json({});
     }
-    console.log('Home entry fetched:', homeEntry.toJSON());
-    process.stdout.write(''); // Force flush logs
     res.status(200).json(homeEntry);
   } catch (error: any) {
-    console.error('Error fetching home entry - Details:', error.message, error.stack);
-    process.stdout.write(''); // Force flush logs
-    res.status(500).json({ error: 'Failed to fetch home entry' });
+    console.error('Error fetching home entry:', error.message, error.stack);
+    next(error);
   }
 }) as RequestHandler);
 
-// POST to create or update a home entry with file upload
 router.post(
   '/',
   upload.single('image') as RequestHandler,
   handleMulterError,
-  async (req: MulterRequest, res: ExpressResponse) => {
+  (async (req: MulterRequest, res: Response, next: NextFunction) => {
     try {
       console.log('POST /api/home received');
       console.log('Raw body:', req.body);
       console.log('File:', req.file);
 
-      const { title, description } = req.body;
+      const { title, description, content, mediaType } = req.body;
       const imagePath = req.file?.filename;
-
       if (!imagePath) {
-        res.status(400).json({ error: 'Image is required' });
-        return;
+        return res.status(400).json({ error: 'Image is required' });
       }
 
-      let home = await Home.findOne({ order: [['id', 'ASC']] });
-      if (!home) {
-        home = await Home.create({
-          title: title || undefined,
-          description: description || undefined,
-          imagePath,
-        });
-      } else {
-        if (home.imagePath) {
-          const oldImagePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', home.imagePath);
-          try {
-            await fs.unlink(oldImagePath);
-            console.log(`Deleted old image: ${home.imagePath}`);
-          } catch (err) {
-            console.warn(`Failed to delete old image at ${oldImagePath}:`, err);
+      const transaction = await (Home.sequelize as Sequelize).transaction({ 
+        isolationLevel: Transaction.ISOLATION_LEVELS.SERIALIZABLE
+      });
+      try {
+        // Fetch all home entries to clean up duplicates
+        const allHomes = await Home.findAll({ order: [['id', 'ASC']], transaction });
+        if (allHomes.length > 1) {
+          const homesToDelete = allHomes.slice(1);
+          for (const homeToDelete of homesToDelete) {
+            if (homeToDelete.imagePath) {
+              const oldImagePath = path.join(process.env.UPLOADS_DIR || 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', homeToDelete.imagePath);
+              try {
+                await fs.unlink(oldImagePath);
+                console.log(`Deleted old image: ${homeToDelete.imagePath}`);
+              } catch (err) {
+                console.warn(`Failed to delete old image at ${oldImagePath}:`, err);
+              }
+            }
+            await homeToDelete.destroy({ transaction });
           }
         }
-        await home.update({
-          title: title || home.title,
-          description: description || home.description,
-          imagePath,
-          updatedAt: new Date(),
-        });
-        await home.reload();
-      }
 
-      console.log('Home updated:', home.toJSON());
-      res.status(200).json(home);
-    } catch (error: any) {
-      if (req.file) {
-        const failedImagePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', req.file.filename);
-        try {
-          await fs.unlink(failedImagePath);
-          console.log(`Deleted image on error: ${req.file.filename}`);
-        } catch (err) {
-          console.warn(`Failed to delete image on error at ${failedImagePath}:`, err);
+        let home = await Home.findOne({ order: [['id', 'ASC']], transaction });
+        if (!home) {
+          home = await Home.create({
+            title: title || null,
+            description: description || null,
+            content: content || null,
+            imagePath,
+            mediaType: req.file?.mimetype || null,
+            updatedAt: new Date(),
+          }, { transaction });
+        } else {
+          if (home.imagePath && home.imagePath !== imagePath) {
+            const oldImagePath = path.join(process.env.UPLOADS_DIR || 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', home.imagePath);
+            try {
+              await fs.unlink(oldImagePath);
+              console.log(`Deleted old image: ${home.imagePath}`);
+            } catch (err) {
+              console.warn(`Failed to delete old image at ${oldImagePath}:`, err);
+            }
+          }
+          await home.update({
+            title: title || home.title,
+            description: description || home.description,
+            content: content || home.content,
+            imagePath,
+            mediaType: req.file?.mimetype || home.mediaType,
+            updatedAt: new Date(),
+          }, { transaction });
         }
+
+        await transaction.commit();
+        console.log('Home updated:', home.toJSON());
+        res.status(200).json(home);
+      } catch (error: any) {
+        await transaction.rollback();
+        if (req.file) {
+          const failedImagePath = path.join(process.env.UPLOADS_DIR || 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', req.file.filename);
+          try {
+            await fs.unlink(failedImagePath);
+            console.log(`Deleted image on error: ${req.file.filename}`);
+          } catch (err) {
+            console.warn(`Failed to delete image on error at ${failedImagePath}:`, err);
+          }
+        }
+        console.error('Error updating home:', error.message, error.stack);
+        next(error);
       }
-      console.error('Error updating home:', error.message, error.stack);
-      res.status(500).json({ error: 'Failed to update home' });
+    } catch (error: any) {
+      console.error('Transaction error:', error.message, error.stack);
+      next(error);
     }
-  }
+  }) as RequestHandler
 );
 
-// PUT update home entry by ID
 router.put(
   '/:id',
   upload.single('image') as RequestHandler,
   handleMulterError,
-  async (req: MulterRequest, res: ExpressResponse) => {
+  (async (req: MulterRequest, res: Response, next: NextFunction) => {
     try {
       console.log('PUT /api/home/:id received:', req.params, req.body);
-      const id = parseInt(req.params.id);
+      const id = parseInt(req.params.id as string);
       if (isNaN(id)) {
-        res.status(400).json({ error: 'Invalid home entry ID' });
-        return;
+        return res.status(400).json({ error: 'Invalid home entry ID' });
       }
 
       const homeEntry = await Home.findByPk(id);
       if (!homeEntry) {
-        res.status(404).json({ error: 'Home entry not found' });
-        return;
+        return res.status(404).json({ error: 'Home entry not found' });
       }
 
-      const { title, description } = req.body;
+      const { title, description, content, mediaType } = req.body;
       let imagePath = req.file?.filename || homeEntry.imagePath;
 
       if (req.file && homeEntry.imagePath) {
-        const oldImagePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', homeEntry.imagePath);
-        console.log(`Attempting to delete old image at: ${oldImagePath}`);
+        const oldImagePath = path.join(process.env.UPLOADS_DIR || 'uploads', homeEntry.imagePath);
         try {
           await fs.unlink(oldImagePath);
           console.log(`Deleted old image: ${homeEntry.imagePath}`);
@@ -156,8 +173,10 @@ router.put(
       }
 
       const updates: Partial<HomeRequestBody> = {};
-      if (title !== undefined) updates.title = title.replace(/^"|"$/g, '');
-      if (description !== undefined) updates.description = description.replace(/^"|"$/g, '');
+      if (title !== undefined) updates.title = title || null;
+      if (description !== undefined) updates.description = description || null;
+      if (content !== undefined) updates.content = content || null;
+      if (mediaType !== undefined) updates.mediaType = mediaType || null;
 
       await homeEntry.update({
         ...updates,
@@ -169,39 +188,45 @@ router.put(
       res.status(200).json(homeEntry);
     } catch (error: any) {
       console.error('Error updating home entry:', error.message, error.stack);
-      res.status(500).json({ error: 'Failed to update home entry' });
+      next(error);
     }
-  }
+  }) as RequestHandler
 );
 
-// DELETE home entry by ID
-router.delete('/:id', async (req: ExpressRequest<ParamsDictionary, any, any, ParsedQs>, res: ExpressResponse) => {
-  try {
-    console.log(`Incoming request: DELETE /api/home/${req.params.id}`);
-    const id = parseInt(req.params.id);
-    const homeEntry = await Home.findByPk(id);
-    if (!homeEntry) {
-      res.status(404).json({ error: 'Home entry not found' });
-      return;
-    }
-
-    if (homeEntry.imagePath) {
-      const imagePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', homeEntry.imagePath);
-      console.log(`Attempting to delete image at: ${imagePath}`);
-      try {
-        await fs.unlink(imagePath);
-        console.log(`Deleted image: ${homeEntry.imagePath}`);
-      } catch (err) {
-        console.warn(`Failed to delete image at ${imagePath}:`, err);
+router.delete(
+  '/:id',
+  (async (req: Request<ParamsDictionary, any, any, ParsedQs>, res: Response, next: NextFunction) => {
+    try {
+      console.log(`Incoming request: DELETE /api/home/${req.params.id}`);
+      const { id } = req.params;
+      const homeEntry = await Home.findByPk(parseInt(id));
+      if (!homeEntry) {
+        return res.status(404).json({ error: 'Home entry not found' });
       }
-    }
 
-    await homeEntry.destroy();
-    res.status(204).send();
-  } catch (error: any) {
-    console.error('Error deleting home entry:', error.message, error.stack);
-    res.status(500).json({ error: 'Failed to delete home entry' });
-  }
-});
+      let deletionError = null;
+      if (homeEntry.imagePath) {
+        const imagePath = path.join(process.env.UPLOADS_DIR || 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', homeEntry.imagePath);
+        console.log(`Attempting to delete image at: ${imagePath}`);
+        try {
+          await fs.unlink(imagePath);
+          console.log(`Deleted image: ${homeEntry.imagePath}`);
+        } catch (err: any) {
+          deletionError = err;
+          console.warn(`Failed to delete image at ${imagePath}:`, err.message);
+        }
+      }
+
+      await homeEntry.destroy();
+      if (deletionError) {
+        return res.status(500).json({ error: 'Failed to delete associated image', details: deletionError.message });
+      }
+      res.status(204).send();
+    } catch (error: any) {
+      console.error('Error deleting home entry:', error.message, error.stack);
+      next(error);
+    }
+  }) as RequestHandler
+);
 
 export default router;

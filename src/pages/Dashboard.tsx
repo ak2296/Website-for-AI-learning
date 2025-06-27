@@ -278,7 +278,7 @@ const Dashboard: React.FC = () => {
               {files.map((file: FileData) => (
                 file.imagePath || file.filePath ? (
                   <Card key={`${file.id}-${file.type}-${refreshKey}`} sx={{ mb: 2, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', p: 1 }}>
-                    {/* Thumbnail and Text Content */}
+                    {/* Thumbnail or File Icon */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', flexGrow: 1 }}>
                       <img
                         src={`http://localhost:5000/uploads/${file.imagePath || file.filePath}?t=${Date.now()}`}
@@ -286,7 +286,15 @@ const Dashboard: React.FC = () => {
                         style={{ maxWidth: "40px", maxHeight: "40px" }}
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
+                          if (!file.imagePath && file.filePath) {
+                            const ext = file.filePath.toLowerCase().split('.').pop();
+                            target.style.display = 'none';
+                            target.parentElement!.innerHTML = `<span style="font-size: 0.9rem; color: ${theme.palette.text.secondary};">${
+                              ext === 'pdf' ? '📄' : ext === 'txt' ? '📝' : ext === 'mp4' || ext === 'mov' ? '🎥' : '📁'
+                            }</span>`;
+                          } else {
+                            target.style.display = 'none';
+                          }
                         }}
                       />
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

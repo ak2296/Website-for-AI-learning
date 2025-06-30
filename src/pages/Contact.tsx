@@ -1,3 +1,4 @@
+// src/components/Contact.tsx
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +21,7 @@ type FormData = {
   message: string;
 };
 
+// Contact form component for submitting inquiries
 export default function Contact() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -40,7 +42,8 @@ export default function Contact() {
     setSuccess(false);
 
     try {
-      const response = await fetch("http://localhost:5000/api/contact", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const response = await fetch(`${apiUrl}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -66,8 +69,8 @@ export default function Contact() {
         <Typography variant="h3" gutterBottom sx={{ mb: 4 }}>
           {t("contact")}
         </Typography>
-        {success && <Alert severity="success" sx={{mb:1, boxShadow: "none"}}>{t("messageSent")}</Alert>}
-        {error && <Alert severity="error" sx={{mb:1, boxShadow: "none"}}>{error}</Alert>}
+        {success && <Alert severity="success" sx={{ mb: 1, boxShadow: "none" }}>{t("messageSent")}</Alert>}
+        {error && <Alert severity="error" sx={{ mb: 1, boxShadow: "none" }}>{error}</Alert>}
         <Box
           component="form"
           onSubmit={handleSubmit}

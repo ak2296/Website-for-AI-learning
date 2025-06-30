@@ -1,3 +1,4 @@
+// src/components/Home.tsx
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Container, Box, Typography, Grid, Button, Card, CardContent, useTheme, CircularProgress } from "@mui/material";
@@ -9,7 +10,6 @@ import PeopleIcon from "@mui/icons-material/People";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 interface HomeEntry {
   id?: number;
   title: string | null;
@@ -17,8 +17,10 @@ interface HomeEntry {
   imagePath?: string | null;
 }
 
+// Fetch home data from the API
 const fetchHome = async (): Promise<HomeEntry> => {
-  const response = await fetch("http://localhost:5000/api/home");
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const response = await fetch(`${apiUrl}/api/home`);
   if (!response.ok && response.status === 404) {
     return { title: null, description: null, imagePath: null }; // Match HomeEntry type
   }
@@ -78,28 +80,20 @@ export default function Home() {
               {t("experienceTheSeamlessIntegration")}
             </Typography>
             <Button 
-            variant="contained" 
-            size="large"
-            onClick={() => navigate("/resources")}>
+              variant="contained" 
+              size="large"
+              onClick={() => navigate("/resources")}
+            >
               {t("exploreResources")}
             </Button>
           </Box>
           <Box sx={{ flex: 1 }}>
             <Box
               component="img"
-              src={entry?.imagePath ? `http://localhost:5000/uploads/${entry.imagePath}` : "/Pics/AI-1.webp"}
+              src={entry?.imagePath ? `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${entry.imagePath}` : "/Pics/AI-1.webp"}
               alt="AI and Technology Illustration"
-              onError={(e) => {
-                console.log("Hero image failed to load", {
-                  attemptedPath: entry?.imagePath ? `http://localhost:5000/uploads/${entry.imagePath}` : "/Pics/AI-1.webp",
-                  error: e.nativeEvent,
-                });
-                setHeroImageLoaded(true);
-              }}
-              onLoad={() => {
-                console.log("Hero image loaded successfully");
-                setHeroImageLoaded(true);
-              }}
+              onError={(e) => setHeroImageLoaded(false)} // Silent fallback
+              onLoad={() => setHeroImageLoaded(true)}
               sx={{
                 width: "100%",
                 borderRadius: 2,
@@ -186,16 +180,8 @@ export default function Home() {
               component="img"
               src="/Pics/Brain-1.png"
               alt="AI Brain"
-              onError={(e) => {
-                console.log("Metrics image failed to load", {
-                  attemptedPath: "/Pics/Brain-1.png",
-                  error: e.nativeEvent,
-                });
-              }}
-              onLoad={() => {
-                console.log("Metrics image loaded successfully");
-                setBrainImageLoaded(true);
-              }}
+              onError={(e) => setBrainImageLoaded(false)} // Silent fallback
+              onLoad={() => setBrainImageLoaded(true)}
               sx={{
                 width: "10%",
                 borderRadius: 2,
@@ -280,9 +266,9 @@ export default function Home() {
             {t("ReadyTo")}
           </Typography>
           <Button 
-          variant="contained" 
-          size="large"
-          onClick={() => navigate("/contact")}
+            variant="contained" 
+            size="large"
+            onClick={() => navigate("/contact")}
           >
             {t("GetStarted")}
           </Button>

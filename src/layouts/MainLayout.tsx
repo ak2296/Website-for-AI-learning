@@ -1,3 +1,4 @@
+// src/components/MainLayout.tsx
 import React from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import {
@@ -36,18 +37,12 @@ interface MainLayoutProps {
   mode: "light" | "dark";
 }
 
+// Main layout component for the application
 export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
   const { t } = useTranslation();
   const location = useLocation();
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
-
-  // Debug: Log theme values
-  React.useEffect(() => {
-    console.log("Theme mode:", mode);
-    console.log("Header color:", muiTheme.palette.header.main);
-    console.log("Background default:", muiTheme.palette.background.default);
-  }, [mode, muiTheme]);
 
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
@@ -67,7 +62,6 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",
-          
           width: "100vw",
           margin: 0,
           backgroundColor: muiTheme.palette.background.default,
@@ -102,15 +96,18 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                 backgroundColor: "inherit",
               }}
             >
-              <Typography variant="h5" component={Link}
-                  to="/" sx={{
-                    textDecoration: "none",
-                    color: (theme: Theme) => theme.palette.text.primary, 
-                    fontWeight: "bold", 
-                   
-                  }}>
-                    {t("yourWebsite")}
-                    </Typography>
+              <Typography
+                variant="h5"
+                component={Link}
+                to="/"
+                sx={{
+                  textDecoration: "none",
+                  color: (theme: Theme) => theme.palette.text.primary,
+                  fontWeight: "bold",
+                }}
+              >
+                {t("yourWebsite")}
+              </Typography>
               <Box
                 sx={{
                   display: "flex",
@@ -121,9 +118,12 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
               >
                 <Box
                   component="img"
-                  src="/Pics/Logo.png"
+                  src={import.meta.env.BASE_URL + "Pics/Logo.png"}
                   alt="Logo"
                   sx={{ height: "70px" }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/placeholder.png"; // Fallback if logo fails
+                  }}
                 />
                 <IconButton
                   onClick={handleDrawerToggle}
@@ -174,19 +174,20 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
                   variant="h4"
                   sx={{
                     textDecoration: "none",
-                    color: (theme: Theme) => theme.palette.text.primary, 
-                    fontWeight: "bold", 
-                   
+                    color: (theme: Theme) => theme.palette.text.primary,
+                    fontWeight: "bold",
                   }}
                 >
-                    {t("yourWebsite")}
+                  {t("yourWebsite")}
                 </Typography>
-
                 <Box
                   component="img"
-                  src="/Pics/Logo.png"
+                  src={import.meta.env.BASE_URL + "Pics/Logo.png"}
                   alt="Logo"
                   sx={{ height: "70px" }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/placeholder.png"; // Fallback if logo fails
+                  }}
                 />
               </Box>
               <Box
@@ -408,7 +409,9 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
           <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
             <IconButton
               component="a"
-              href="https://facebook.com"
+              href={
+                import.meta.env.VITE_REACT_APP_FACEBOOK_URL || "https://facebook.com"
+              }
               target="_blank"
               sx={{ color: "white" }}
             >
@@ -416,7 +419,9 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
             </IconButton>
             <IconButton
               component="a"
-              href="https://instagram.com"
+              href={
+                import.meta.env.VITE_REACT_APP_INSTAGRAM_URL || "https://instagram.com"
+              }
               target="_blank"
               sx={{ color: "white" }}
             >
@@ -424,7 +429,9 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
             </IconButton>
             <IconButton
               component="a"
-              href="https://youtube.com"
+              href={
+                import.meta.env.VITE_REACT_APP_YOUTUBE_URL || "https://youtube.com"
+              }
               target="_blank"
               sx={{ color: "white" }}
             >
@@ -432,7 +439,9 @@ export default function MainLayout({ toggleMode, mode }: MainLayoutProps) {
             </IconButton>
             <IconButton
               component="a"
-              href="https://linkedin.com"
+              href={
+                import.meta.env.VITE_REACT_APP_LINKEDIN_URL || "https://linkedin.com"
+              }
               target="_blank"
               sx={{ color: "white" }}
             >

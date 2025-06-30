@@ -1,3 +1,4 @@
+// src/components/About.tsx
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Container, Typography, Box, Divider, Grid, CircularProgress } from "@mui/material";
@@ -11,13 +12,18 @@ interface AboutEntry {
   imagePath?: string;
 }
 
+// Fetch about data from the API with robust error handling
 const fetchAbout = async (): Promise<AboutEntry> => {
-  const response = await fetch("http://localhost:5000/api/about", {
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const response = await fetch(`${apiUrl}/api/about`, {
     headers: {
       "Cache-Control": "no-cache",
+      "Content-Type": "application/json",
     },
   });
-  if (!response.ok) throw new Error("Failed to fetch about data");
+  if (!response.ok) {
+    throw new Error(`Failed to fetch about data: ${response.status}`);
+  }
   const data = await response.json();
   return data || {};
 };
@@ -28,10 +34,8 @@ export default function About() {
   const { data: entry, error, isLoading } = useQuery({
     queryKey: ["about"],
     queryFn: fetchAbout,
+    retry: 1, // Limit retries to avoid infinite loops on failure
   });
-
-  // Log screen width for debugging
-  console.log("Window width:", window.innerWidth);
 
   if (isLoading) return <CircularProgress />;
   if (error) return <Typography color="error">Error: {(error as Error).message}</Typography>;
@@ -53,7 +57,7 @@ export default function About() {
             display: "flex",
             flexWrap: "wrap",
             alignItems: "flex-start",
-            justifyContent: "space-between", // Align items to the top
+            justifyContent: "space-between",
           }}
         >
           {/* Left Column: Mission and Vision */}
@@ -63,7 +67,7 @@ export default function About() {
             md={6}
             component="div"
             {...({ item: true } as GridProps)}
-            sx={{ pr: { md: 4 } }} // Padding-right to separate text from image
+            sx={{ pr: { md: 4 } }}
           >
             <Box sx={{ mb: 4 }}>
               <Typography variant="h5" gutterBottom>
@@ -90,28 +94,29 @@ export default function About() {
               md={6}
               component="div"
               {...({ item: true } as GridProps)}
-              sx={{ pl: 0, pr: 1}} // Remove padding to control spacing manually
+              sx={{ pl: 0, pr: 1 }}
             >
               <Box
                 sx={{
                   display: "flex",
-                  justifyContent: "center", // Center the image within the Grid item
+                  justifyContent: "center",
                 }}
               >
                 <Box
                   component="img"
-                  src={`http://localhost:5000/uploads/${entry.imagePath}?t=${new Date().getTime()}`}
-                  alt={entry?.title || "/Pics/AI-2.png"}
+                  src={(import.meta.env.VITE_API_URL || "http://localhost:5000") + `/uploads/${entry.imagePath}?t=${new Date().getTime()}`}
+                  alt={entry?.title || "About Image"}
                   sx={{
-                    width: "100%", // Full width of the Grid item
-                    height: "auto", // Maintain aspect ratio
-                    maxHeight: "300px", // Limit vertical size
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: "300px",
                     borderRadius: 2,
                     boxShadow: "none",
                     ml: 1,
-                    
                   }}
-                  onError={(e) => console.log(`Image failed to load: http://localhost:5000/uploads/${entry.imagePath}`)}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = import.meta.env.BASE_URL + "Pics/AI-2.png";
+                  }}
                 />
               </Box>
             </Grid>

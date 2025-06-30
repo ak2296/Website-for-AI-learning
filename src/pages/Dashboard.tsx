@@ -1,4 +1,4 @@
-// src/pages/dashboard.tsx
+// src/pages/Dashboard.tsx
 import React, { useState, useEffect, useCallback } from "react";
 import { Container, Typography, Grid, Button, TextField, Tabs, Tab, Card, CardContent, Box, Divider, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -7,8 +7,10 @@ import type { AxiosResponse } from 'axios';
 import type { ChangeEvent } from "react";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from "react-router-dom"; // Ensure this import is present
 
-// Type definitions for file inputs and file data
+// Define types for file inputs and file data
 type FileInput = File | null;
 type FileData = {
   id: number;
@@ -21,17 +23,18 @@ type FileData = {
   updatedAt?: string;
 };
 
-// Order of file types for sorting
+// Set order for sorting file types
 const typeOrder: { [K in FileData["type"]]: number } = {
   resources: 1,
   home: 2,
   about: 3,
 };
 
-// Main Dashboard Component
+// Main Dashboard Component with logout functionality
 const Dashboard: React.FC = () => {
   const theme = useTheme();
-  // State for managing file uploads and UI
+  const navigate = useNavigate(); // Initialize navigate
+  // State for managing file uploads, UI, and logout
   const [resourceFile, setResourceFile] = useState<FileInput>(null);
   const [resourceTitle, setResourceTitle] = useState("");
   const [resourceDescription, setResourceDescription] = useState("");
@@ -49,33 +52,22 @@ const Dashboard: React.FC = () => {
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogIcon, setDialogIcon] = useState<React.ReactNode>(null);
 
-  // Fetch all data from API on component mount
+  // Fetch all data from APIs when the component loads
   useEffect(() => {
     fetchAllData().catch(err => {
-      console.error("Failed to fetch data:", err);
       setError("Failed to load data. Check console for details.");
     });
   }, []);
 
-  // Fetch data from resources, home, and about APIs
+  // Get data from resources, home, and about APIs
   const fetchAllData = async () => {
-    console.log("Starting data fetch...");
     try {
+      const apiUrl = import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:5000";
       const [resourcesResponse, homeResponse, aboutResponse] = await Promise.all([
-        axios.get('http://localhost:5000/api/resources').catch(err => {
-          console.warn("Resources API error:", err);
-          return { status: 404, data: [] };
-        }),
-        axios.get('http://localhost:5000/api/home').catch(err => {
-          console.warn("Home API error:", err);
-          return { status: 404, data: [] };
-        }),
-        axios.get('http://localhost:5000/api/about').catch(err => {
-          console.warn("About API error:", err);
-          return { status: 404, data: [] };
-        }),
+        axios.get(`${apiUrl}/api/resources`).catch(err => ({ status: 404, data: [] })),
+        axios.get(`${apiUrl}/api/home`).catch(err => ({ status: 404, data: [] })),
+        axios.get(`${apiUrl}/api/about`).catch(err => ({ status: 404, data: [] })),
       ]);
-      console.log("API Responses:", { resources: resourcesResponse, home: homeResponse, about: aboutResponse });
 
       const allFiles = [
         ...(resourcesResponse.status === 200 && resourcesResponse.data ? 
@@ -98,23 +90,21 @@ const Dashboard: React.FC = () => {
           const newTime = Math.max(new Date(file.updatedAt || 0).getTime(), new Date(file.createdAt || 0).getTime());
           return newTime > existingTime ? unique.map((item: FileData) => (item.id === file.id && item.type === file.type) ? file : item) : unique;
         }, [] as FileData[]);
-      console.log("Processed files:", allFiles);
       setFiles(allFiles);
       setError(null);
     } catch (error: unknown) {
-      console.error("Fetch error:", error);
       setError("An unexpected error occurred. Check console for details.");
     }
   };
 
-  // Handle file input changes for upload forms
+  // Handle changes when selecting a file
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>, setFile: (file: FileInput) => void) => {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
     }
   };
 
-  // Handle file upload to the specified type (resources, home, about)
+  // Upload a file to the specified type (resources, home, about)
   const handleUpload = async (type: string, file: FileInput, title: string, description: string) => {
     if (!file) return;
 
@@ -132,7 +122,8 @@ const Dashboard: React.FC = () => {
     }
 
     try {
-      await axios.post(`http://localhost:5000/api/${type}`, formData, {
+      const apiUrl = import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:5000";
+      await axios.post(`${apiUrl}/api/${type}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const fileName = file.name;
@@ -141,15 +132,15 @@ const Dashboard: React.FC = () => {
       setOpenDialog(true);
       await fetchAllData();
     } catch (error: any) {
-      console.error(`Error uploading ${type}:`, error.response ? error.response.data : error.message);
       setError(`Upload failed for ${type}: ${error.message}`);
     }
   };
 
-  // Handle file deletion from the specified type
+  // Delete a file from the specified type
   const handleDelete = useCallback(async (file: FileData) => {
     try {
-      const deleteEndpoint = `http://localhost:5000/api/${file.type}/${file.id}`;
+      const apiUrl = import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:5000";
+      const deleteEndpoint = `${apiUrl}/api/${file.type}/${file.id}`;
       const response: AxiosResponse = await axios.delete(deleteEndpoint, { timeout: 10000 });
       if (response.status === 200 || response.status === 204) {
         setFiles(prevFiles => prevFiles.filter(f => !(f.id === file.id && f.type === file.type)));
@@ -161,25 +152,43 @@ const Dashboard: React.FC = () => {
         await fetchAllData();
       }
     } catch (error: any) {
-     
       setError(`Delete failed: ${error.message}`);
     }
   }, [files]);
 
-  // Handle tab changes for navigation between sections
+  // Switch between tabs for different sections
   const handleTabChange = (_: unknown, newValue: number) => {
     setTabValue(newValue);
   };
 
-  // Handle dialog close
+  // Close the success/error dialog
   const handleDialogClose = () => {
     setOpenDialog(false);
   };
 
-  // Render the dashboard UI
+  // Handle logout functionality
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Clear token
+    navigate("/admin"); // Navigate back to admin login
+  };
+
+  // Display the dashboard UI
   return (
     <Container sx={{ padding: 3, backgroundColor: theme.palette.background.default, minHeight: "100vh" }}>
-      <Typography variant="h4" color={theme.palette.text.primary} gutterBottom sx={{ fontSize: '1.5rem' }}>Admin Dashboard</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h4" color={theme.palette.text.primary} gutterBottom sx={{ fontSize: '1.5rem' }}>
+          Admin Dashboard
+        </Typography>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={handleLogout}
+          startIcon={<LogoutIcon />}
+          sx={{ px: 2, py: 0.5, borderRadius: "8px" }}
+        >
+          Logout
+        </Button>
+      </Box>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: '24px' }}>
         <Grid component="div" sx={{ flex: '1 1 100%', maxWidth: '100%' }}>
           <Tabs value={tabValue} onChange={handleTabChange} aria-label="dashboard tabs" sx={{ mb: 2 }}>
@@ -315,7 +324,7 @@ const Dashboard: React.FC = () => {
                         <Box sx={{ minWidth: '40px', minHeight: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           {file.imagePath && (file.imagePath.toLowerCase().endsWith('.png') || file.imagePath.toLowerCase().endsWith('.jpg')) ? (
                             <img
-                              src={`http://localhost:5000/uploads/${file.imagePath}?t=${Date.now()}`}
+                              src={`${import.meta.env.VITE_REACT_APP_API_URL}/uploads/${file.imagePath}?t=${Date.now()}`}
                               alt={file.title || "File"}
                               style={{ maxWidth: "40px", maxHeight: "40px" }}
                               onError={(e) => {
@@ -361,7 +370,7 @@ const Dashboard: React.FC = () => {
           </Card>
         </Grid>
       </Box>
-      {/* Dialog for Success Confirmation */}
+      {/* Dialog for showing upload/delete success */}
       <Dialog
         open={openDialog}
         onClose={handleDialogClose}

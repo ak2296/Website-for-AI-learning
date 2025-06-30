@@ -1,30 +1,35 @@
+// backend/src/routes/contact.ts
 import express, { Request, Response, Router } from "express";
 import nodemailer from "nodemailer";
 import * as dotenv from "dotenv";
 
-dotenv.config(); // Loads .env variables into process.env
+// Load environment variables from .env file
+dotenv.config();
 
+// Create a router for contact-related API routes
 const router: Router = express.Router();
 
-// Configure email transporter
+// Set up email transporter using environment variables
 const transporter = nodemailer.createTransport({
-  service: "gmail", // Uses Gmail's SMTP service
+  service: process.env.EMAIL_SERVICE || "gmail", // Email service (default to Gmail if not set)
   auth: {
     user: process.env.EMAIL_USER, // Email account to send from
     pass: process.env.EMAIL_PASS, // Password for that account
   },
 });
 
+// Handle GET request to show a placeholder contact response
 router.get("/", (req: Request, res: Response) => {
   res.json({ message: "Contact data placeholder" });
 });
 
+// Handle POST request to send contact form email
 const postHandler: express.RequestHandler = async (req: Request, res: Response) => {
-  const { name, email, message } = req.body; // Extracts form data from the request
+  const { name, email, message } = req.body; // Get form data from the request
 
-  // Validate input
+  // Check if all required fields are provided
   if (!name || !email || !message) {
-    res.status(400).json({ error: "All fields are required" }); // Returns 400 if data is missing
+    res.status(400).json({ error: "All fields are required" }); // Return error if data is missing
     return;
   }
 
@@ -36,14 +41,13 @@ const postHandler: express.RequestHandler = async (req: Request, res: Response) 
   };
 
   try {
-    await transporter.sendMail(mailOptions); // Sends the email using Nodemailer
+    await transporter.sendMail(mailOptions); // Send the email using Nodemailer
     res.status(200).json({ success: true, message: "Email sent successfully" }); // Success response
   } catch (error) {
-    console.error("Email sending failed:", error); // Logs error for debugging
     res.status(500).json({ error: "Failed to send email" }); // Error response
   }
 };
 
-router.post("/", postHandler); // Handles POST requests to /api/contact
+router.post("/", postHandler); // Route for POST requests to /api/contact
 
 export default router;

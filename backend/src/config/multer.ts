@@ -1,15 +1,17 @@
 import multer from 'multer';
 import path from 'path';
 
+// Ensure the uploads directory exists
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads');
+    cb(null, process.env.UPLOADS_DIR || 'src/uploads');
   },
   filename: (req, file, cb) => {
     cb(null, `file-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`);
   },
 });
 
+// File filter to validate file types based on extensions
 const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   console.log(`Detected MIME type: ${file.mimetype}`);
   console.log(`Original filename: ${file.originalname}`);
@@ -31,10 +33,9 @@ const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCa
     '.mkv': 'video/x-matroska',
   };
 
-  // Get the file extension (lowercase)
+  // Normalize the extension to lowercase
   const ext = path.extname(file.originalname).toLowerCase();
 
-  // Check if the extension is allowed
   if (ext in allowedExtensions) {
     console.log(`Accepted file with extension: ${ext} (mapped to ${allowedExtensions[ext]})`);
     cb(null, true);
@@ -44,10 +45,11 @@ const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCa
   }
 };
 
+// Export the upload middleware
 export const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB limit
+    fileSize: parseInt(process.env.MAX_FILE_SIZE || '52428800'), // 50MB limit
   },
 });

@@ -69,7 +69,7 @@ router.post(
         });
       } else {
         if (aboutEntry.imagePath) {
-          const oldImagePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', aboutEntry.imagePath);
+          const oldImagePath = path.join(process.env.UPLOADS_DIR || 'src/uploads', aboutEntry.imagePath);
          // console.log(`Attempting to delete old image at: ${oldImagePath}`);
           try {
             await fs.unlink(oldImagePath);
@@ -93,7 +93,7 @@ router.post(
       res.status(200).json(aboutEntry);
     } catch (error: any) {
       if (req.file) {
-        const failedImagePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', req.file.filename);
+        const failedImagePath = path.join(process.env.UPLOADS_DIR || 'src/uploads', req.file.filename);
         try {
           await fs.unlink(failedImagePath);
           console.log(`Deleted image on error: ${req.file.filename}`);
@@ -132,7 +132,7 @@ router.put(
 
       if (req.file) {
         if (imagePath) {
-          const oldImagePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', imagePath);
+          const oldImagePath = path.join(process.env.UPLOADS_DIR || 'src/uploads', imagePath);
           //console.log(`Attempting to delete old image at: ${oldImagePath}`);
           try {
             await fs.unlink(oldImagePath);
@@ -176,7 +176,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
     let deletionError = null;
     if (aboutEntry.imagePath) {
-      const imagePath = path.join(process.env.UPLOADS_DIR || 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', aboutEntry.imagePath);
+      const imagePath = path.join(process.env.UPLOADS_DIR || '/src/uploads', aboutEntry.imagePath);
       //console.log(`Attempting to delete image at: ${imagePath}`);
       try {
         await fs.unlink(imagePath);

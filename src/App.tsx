@@ -4,7 +4,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { AnimatePresence } from "framer-motion";
 import ErrorBoundary from "./components/ErrorBoundary";
-import createAppTheme from "./theme"; // Import the dynamic theme creation function
+import createAppTheme from "./theme"; 
 import MainLayout from "./layouts/MainLayout";
 
 

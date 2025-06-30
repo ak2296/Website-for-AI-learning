@@ -1,4 +1,3 @@
-// src/routes/admin.ts
 import { Router, Request, Response, NextFunction } from "express"; // Explicitly import types
 import Admin from "../models/admin";
 import { TextEntry, Home, About, Resource } from "../config/database";
@@ -11,7 +10,7 @@ const router = Router();
 // File upload configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.resolve(__dirname, "../uploads"); // Adjusted to backend/src/uploads from src/routes/
+    const uploadDir = process.env.UPLOADS_DIR || path.resolve(__dirname, "../uploads");
     console.log("Resolved upload directory:", uploadDir); // Added debug log
     // Ensure the directory exists
     if (!path.isAbsolute(uploadDir)) {
@@ -42,7 +41,9 @@ router.post("/login", async (req: Request, res: Response, next: NextFunction) =>
     if (admin) {
       const isValid = await admin.validPassword(password);
       if (isValid) {
-        res.json({ success: true, token: "dummy-token" }); // Replace with actual token generation
+        // Replace with actual token generation (e.g., using jsonwebtoken)
+        const token = process.env.JWT_SECRET ? require('jsonwebtoken').sign({ username }, process.env.JWT_SECRET) : "dummy-token";
+        res.json({ success: true, token });
       } else {
         res.status(401).json({ success: false, message: "Invalid credentials" });
       }

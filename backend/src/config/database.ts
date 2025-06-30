@@ -33,10 +33,10 @@ const syncDatabase = async () => {
     const existingDb = fs.existsSync(dbPath);
     if (!existingDb) {
       await sequelize.sync({ force: true }); // Force initial creation
-      console.log("Database created at", dbPath);
+      //console.log("Database created at", dbPath);
     } else {
       await sequelize.sync({ alter: false }); // No alterations
-      console.log("Database verified at", dbPath);
+      //console.log("Database verified at", dbPath);
     }
     return true;
   } catch (error) {

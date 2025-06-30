@@ -33,7 +33,7 @@ const handleMulterError = (err: any, req: Request, res: Response, next: NextFunc
 // GET the first about entry
 router.get('/', async (req: Request, res: Response) => {
   try {
-    console.log('GET /api/about received');
+    //console.log('GET /api/about received');
     const aboutEntry = await About.findOne({
       order: [['id', 'ASC']],
     });
@@ -52,9 +52,7 @@ router.post(
   async (req: MulterRequest, res: Response) => {
     try {
       console.log('POST /api/about received');
-      console.log('Raw body:', req.body);
-      console.log('File:', req.file);
-
+      
       const { title, content } = req.body;
       const imagePath = req.file?.filename;
       if (!imagePath) {
@@ -72,7 +70,7 @@ router.post(
       } else {
         if (aboutEntry.imagePath) {
           const oldImagePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', aboutEntry.imagePath);
-          console.log(`Attempting to delete old image at: ${oldImagePath}`);
+         // console.log(`Attempting to delete old image at: ${oldImagePath}`);
           try {
             await fs.unlink(oldImagePath);
             console.log(`Deleted old image: ${aboutEntry.imagePath}`);
@@ -91,7 +89,7 @@ router.post(
         await aboutEntry.reload();
       }
 
-      console.log('About entry updated:', aboutEntry.toJSON());
+      //console.log('About entry updated:', aboutEntry.toJSON());
       res.status(200).json(aboutEntry);
     } catch (error: any) {
       if (req.file) {
@@ -116,7 +114,7 @@ router.put(
   handleMulterError,
   async (req: MulterRequest, res: Response) => {
     try {
-      console.log('PUT /api/about/:id received:', req.params, req.body);
+      //console.log('PUT /api/about/:id received:', req.params, req.body);
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         res.status(400).json({ error: 'Invalid about entry ID' });
@@ -135,7 +133,7 @@ router.put(
       if (req.file) {
         if (imagePath) {
           const oldImagePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', imagePath);
-          console.log(`Attempting to delete old image at: ${oldImagePath}`);
+          //console.log(`Attempting to delete old image at: ${oldImagePath}`);
           try {
             await fs.unlink(oldImagePath);
             console.log(`Deleted old image: ${imagePath}`);
@@ -156,7 +154,7 @@ router.put(
         updatedAt: new Date(),
       });
 
-      console.log('About entry updated successfully:', aboutEntry.toJSON());
+      //console.log('About entry updated successfully:', aboutEntry.toJSON());
       res.status(200).json(aboutEntry);
     } catch (error: any) {
       console.error('Error updating about entry:', error.message, error.stack);
@@ -168,7 +166,7 @@ router.put(
 // DELETE about entry by ID
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    console.log(`Incoming request: DELETE /api/about/${req.params.id}`);
+    //console.log(`Incoming request: DELETE /api/about/${req.params.id}`);
     const id = parseInt(req.params.id);
     const aboutEntry = await About.findByPk(id);
     if (!aboutEntry) {
@@ -179,7 +177,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     let deletionError = null;
     if (aboutEntry.imagePath) {
       const imagePath = path.join(process.env.UPLOADS_DIR || 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', aboutEntry.imagePath);
-      console.log(`Attempting to delete image at: ${imagePath}`);
+      //console.log(`Attempting to delete image at: ${imagePath}`);
       try {
         await fs.unlink(imagePath);
         console.log(`Deleted image: ${aboutEntry.imagePath}`);

@@ -39,7 +39,7 @@ const handleMulterError = (err: any, req: Request, res: Response, next: NextFunc
 // GET all resources from the database
 router.get('/', async (req: Request, res: Response) => {
   try {
-    console.log('GET /api/resources received');
+    
     // Fetch all resources, ordered by ID in ascending order
     const resources = await Resource.findAll({ order: [['id', 'ASC']] });
     res.json(resources);
@@ -52,7 +52,7 @@ router.get('/', async (req: Request, res: Response) => {
 // GET a specific resource by ID
 router.get('/:id', async (req: Request, res: Response) => {
   try {
-    console.log('GET /api/resources/:id received');
+    
     // Find the resource by primary key (ID)
     const resource = await Resource.findByPk(req.params.id);
     if (!resource) {
@@ -74,8 +74,7 @@ router.post(
   async (req: MulterRequest, res: Response) => {
     try {
       console.log('POST /api/resources received');
-      console.log('Raw body:', req.body);
-      console.log('File:', req.file);
+     
 
       // Extract title, description, and file details from the request
       const { title, description } = req.body;
@@ -96,7 +95,7 @@ router.post(
         mediaType: mediaType ?? undefined,
       });
 
-      console.log('Resource created:', resource.toJSON());
+      
       res.status(200).json(resource);
     } catch (error: any) {
       // Clean up the uploaded file if the database operation fails
@@ -122,7 +121,7 @@ router.put(
   handleMulterError,
   async (req: MulterRequest, res: Response) => {
     try {
-      console.log('PUT /api/resources/:id received:', req.params, req.body);
+     
       // Parse the resource ID from the URL parameter
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -146,7 +145,7 @@ router.put(
       if (req.file) {
         if (filePath) {
           const oldFilePath = path.join('C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', filePath);
-          console.log(`Attempting to delete old file at: ${oldFilePath}`);
+          //console.log(`Attempting to delete old file at: ${oldFilePath}`);
           try {
             await fs.unlink(oldFilePath);
             console.log(`Deleted old file: ${filePath}`);
@@ -167,7 +166,7 @@ router.put(
         updatedAt: new Date(),
       });
 
-      console.log('Resource updated successfully:', resource.toJSON());
+      //console.log('Resource updated successfully:', resource.toJSON());
       res.status(200).json(resource);
     } catch (error: any) {
       console.error('Error updating resource:', error.message, error.stack);
@@ -179,7 +178,7 @@ router.put(
 // DELETE a resource by ID
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    console.log(`Incoming request: DELETE /api/resources/${req.params.id}`);
+    //console.log(`Incoming request: DELETE /api/resources/${req.params.id}`);
     const id = parseInt(req.params.id);
     const resource = await Resource.findByPk(id);
     if (!resource) {
@@ -190,7 +189,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     let deletionError = null;
     if (resource.filePath) {
       const filePath = path.join(process.env.UPLOADS_DIR || 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', resource.filePath);
-      console.log(`Attempting to delete file at: ${filePath}`);
+      //console.log(`Attempting to delete file at: ${filePath}`);
       try {
         await fs.unlink(filePath);
         console.log(`Deleted file: ${resource.filePath}`);

@@ -1,6 +1,6 @@
 // src/pages/dashboard.tsx
 import React, { useState, useEffect, useCallback } from "react";
-import { Container, Typography, Grid, Button, TextField, Tabs, Tab, Card, CardContent, Box, Divider, Dialog, DialogContent, DialogContentText, Snackbar, Alert } from "@mui/material";
+import { Container, Typography, Grid, Button, TextField, Tabs, Tab, Card, CardContent, Box, Divider, Dialog, DialogContent, DialogContentText } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
@@ -161,11 +161,7 @@ const Dashboard: React.FC = () => {
         await fetchAllData();
       }
     } catch (error: any) {
-      console.error('Delete error details:', {
-        message: error.message || 'Unknown error',
-        response: error.response ? error.response.data : 'No response',
-        status: error.response?.status || 'No status',
-      });
+     
       setError(`Delete failed: ${error.message}`);
     }
   }, [files]);

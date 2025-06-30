@@ -18,10 +18,8 @@ import { useState, useMemo, useCallback, useEffect } from "react";
   import { useTheme } from "@mui/material/styles";
   import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
   import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-  import DescriptionIcon from "@mui/icons-material/Description"; // For text fallback
   import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf"; // For PDF fallback
   import VideocamIcon from "@mui/icons-material/Videocam"; // For video fallback
-  import ImageIcon from "@mui/icons-material/Image"; // For image fallback
 
   type Resource = {
     id: number;

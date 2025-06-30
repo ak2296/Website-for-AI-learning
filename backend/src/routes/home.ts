@@ -57,8 +57,7 @@ router.post(
   (async (req: MulterRequest, res: Response, next: NextFunction) => {
     try {
       console.log('POST /api/home received');
-      console.log('Raw body:', req.body);
-      console.log('File:', req.file);
+      
 
       const { title, description, content, mediaType } = req.body;
       const imagePath = req.file?.filename;
@@ -119,7 +118,7 @@ router.post(
         }
 
         await transaction.commit();
-        console.log('Home updated:', home.toJSON());
+        
         res.status(200).json(home);
       } catch (error: any) {
         await transaction.rollback();
@@ -148,7 +147,7 @@ router.put(
   handleMulterError,
   (async (req: MulterRequest, res: Response, next: NextFunction) => {
     try {
-      console.log('PUT /api/home/:id received:', req.params, req.body);
+      
       const id = parseInt(req.params.id as string);
       if (isNaN(id)) {
         return res.status(400).json({ error: 'Invalid home entry ID' });
@@ -197,7 +196,7 @@ router.delete(
   '/:id',
   (async (req: Request<ParamsDictionary, any, any, ParsedQs>, res: Response, next: NextFunction) => {
     try {
-      console.log(`Incoming request: DELETE /api/home/${req.params.id}`);
+      
       const { id } = req.params;
       const homeEntry = await Home.findByPk(parseInt(id));
       if (!homeEntry) {
@@ -207,7 +206,7 @@ router.delete(
       let deletionError = null;
       if (homeEntry.imagePath) {
         const imagePath = path.join(process.env.UPLOADS_DIR || 'C:/Users/gholi/Projects/ai-training-website/backend/src/uploads', homeEntry.imagePath);
-        console.log(`Attempting to delete image at: ${imagePath}`);
+       
         try {
           await fs.unlink(imagePath);
           console.log(`Deleted image: ${homeEntry.imagePath}`);

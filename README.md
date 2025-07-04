@@ -1,10 +1,10 @@
 # Website for the company
 This app uses TypeScript + Vite + React
 
-###Website for AI Learning
+### Website for AI Learning
 This is a website built with React and TypeScript for the frontend, and an Express.js backend with Sequelize and SQLite, it offers a modern, responsive interface with administrative capabilities. The DB is temporary and can be changed to the desired service.
 
-##Features
+## Features
 Home :The home page for the website.
 About: The about page
 Contact: Where users can contact the admin/ website owners by email (need to edit backend .env)
@@ -12,31 +12,31 @@ Resource Directory: Access a collection of learning materials (e.g., PDFs, video
 Admin Dashboard: Manage files (partially implemented).
 Responsive Design: Works on desktop and mobile devices.
 
-##Getting Started
+## Getting Started
 
-###Prerequisites
+### Prerequisites
 Node.js (v16 or later)
 npm or yarn
 Git (for cloning the repository)
 
-##Installation
+## Installation
 
-###Clone the Repository
+### Clone the Repository
 git clone https://github.com/ak2296/Website-for-AI-learning.git
 cd Website-for-AI-learning
 
 
-###Install Frontend Dependencies
+### Install Frontend Dependencies
 
 Navigate to the root directory:cd Website-for-AI-learning
 
 
-###Install dependencies:npm install
+### Install dependencies:npm install
 
 
 
 
-###Install Backend Dependencies
+### Install Backend Dependencies
 
 Navigate to the backend directory:cd backend
 npm install
@@ -44,16 +44,16 @@ npm install
 
 
 
-##Set Up Environment Variables
+## Set Up Environment Variables
 
 In .env file in the backend directory: adjust as needed (There are comments to help)
 
 
 
 
-#Running the Application
+# Running the Application
 
-###Start the Backend Server
+### Start the Backend Server
 
 From the backend directory:npx ts-node app.ts
 
@@ -61,7 +61,7 @@ From the backend directory:npx ts-node app.ts
 The server should start on http://localhost:5000. Check the console for confirmation.
 
 
-###Start the Frontend Development Server
+### Start the Frontend Development Server
 
 Open a new terminal. From the root directory:npm run dev
 
@@ -70,22 +70,22 @@ Open your browser and go to http://localhost:5173. The app should load with the 
 
 
 
-##Usage
+## Usage
 
-###Creating an Admin User
+### Creating an Admin User
 
 To create an admin account, run this from the backend directory:
 npx ts-node src/scripts/createAdmin.ts
-this way you create the admin in console. this is not implemented directly to the website to prevent others to be able to create accounts.
+This way you create the admin in console. This is not implemented directly to the website to prevent others to be able to create accounts.
 
 Prerequisites: Ensure the backend is running and the admin dashboard is accessible.
 Steps:
-To access the admin dashboard just add /admin to the address bar. there is no button to access it for security reasons. 
-you'll end up in a log in page. Log in and you'll be redirected to admin dashboard.
+To access the admin dashboard just add /admin to the address bar. There is no button to access it for security reasons. 
+You'll end up in a log in page. Log in and you'll be redirected to admin dashboard.
 
 
 
-###Uploading Files
+### Uploading Files
 
 Prerequisites: Ensure the backend is running.
 Steps:

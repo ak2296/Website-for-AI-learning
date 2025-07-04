@@ -1,4 +1,3 @@
-import "./index.css";
 import "./i18n";
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client";

@@ -147,10 +147,7 @@ export default function Resources() {
             onError={() => {}} // Silent fallback
           />
         );
-      } else if (
-        resource.mediaType?.replace(/^"|"$/g, "").startsWith("video/") ||
-        extension === "mp4"
-      ) {
+      } else if (extension === "mp4") {
         return (
           <Box
             sx={{
@@ -335,7 +332,6 @@ export default function Resources() {
                         {resource.description}
                       </Typography>
                     </CardContent>
-                    {/* Removed "View More" link since card is now clickable */}
                   </Card>
                 </Link>
               </Grid>

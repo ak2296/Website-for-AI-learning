@@ -28,25 +28,23 @@ cd Website-for-AI-learning
 
 ### Install Frontend Dependencies
 
-Navigate to the root directory:cd Website-for-AI-learning
-
-
-### Install dependencies:npm install
+Navigate to the root directory: `cd Website-for-AI-learning`
+ ```npm install```
 
 
 
 
 ### Install Backend Dependencies
 
-Navigate to the backend directory:cd backend
-npm install
+Navigate to the backend directory: `cd backend`
+```npm install```
 
 
 
 
 ## Set Up Environment Variables
 
-In .env file in the backend directory: adjust as needed (There are comments to help)
+In ```.env``` file in the backend directory: adjust as needed (There are comments to help)
 
 
 
@@ -63,7 +61,7 @@ The server should start on http://localhost:5000. Check the console for confirma
 
 ### Start the Frontend Development Server
 
-Open a new terminal. From the root directory:npm run dev
+Open a new terminal. From the root directory: ```npm run dev```
 
 
 Open your browser and go to http://localhost:5173. The app should load with the home page.
@@ -75,12 +73,12 @@ Open your browser and go to http://localhost:5173. The app should load with the 
 ### Creating an Admin User
 
 To create an admin account, run this from the backend directory:
-npx ts-node src/scripts/createAdmin.ts
+```npx ts-node src/scripts/createAdmin.ts```
 This way you create the admin in console. This is not implemented directly to the website to prevent others to be able to create accounts.
 
 Prerequisites: Ensure the backend is running and the admin dashboard is accessible.
 Steps:
-To access the admin dashboard just add /admin to the address bar. There is no button to access it for security reasons. 
+To access the admin dashboard just add ```/admin``` to the address bar. There is no button to access it for security reasons. 
 You'll end up in a log in page. Log in and you'll be redirected to admin dashboard.
 
 

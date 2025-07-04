@@ -1,54 +1,92 @@
-# React + TypeScript + Vite
+# Website for the company
+This app uses TypeScript + Vite + React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Website for AI Learning
+This is a website built with React and TypeScript for the frontend, and an Express.js backend with Sequelize and SQLite, it offers a modern, responsive interface with administrative capabilities. The DB is temporary and can be changed to the desired service.
 
-Currently, two official plugins are available:
+Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Resource Directory: Access a collection of learning materials (e.g., PDFs, videos) uploaded by admins.
+Admin Dashboard: Manage files (partially implemented).
+Responsive Design: Works on desktop and mobile devices.
 
-## Expanding the ESLint configuration
+Getting Started
+Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Node.js (v16 or later)
+npm or yarn
+Git (for cloning the repository)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Installation
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Clone the Repository
+git clone https://github.com/ak2296/Website-for-AI-learning.git
+cd Website-for-AI-learning
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Install Frontend Dependencies
+
+Navigate to the root directory:cd Website-for-AI-learning
+
+
+Install dependencies:npm install
+
+
+
+
+Install Backend Dependencies
+
+Navigate to the backend directory:cd backend
+npm install
+
+
+
+
+Set Up Environment Variables
+
+In .env file in the backend directory: adjust as needed (There are comments to help)
+
+
+
+
+Running the Application
+
+Start the Backend Server
+
+From the backend directory:npx ts-node app.ts
+
+
+The server should start on http://localhost:5000. Check the console for confirmation.
+
+
+Start the Frontend Development Server
+
+Open a new terminal. From the root directory:npm run dev
+
+
+Open your browser and go to http://localhost:5173. The app should load with the home page.
+
+
+
+Usage
+
+Creating an Admin User
+
+To create an admin account, run this from the backend directory:
+npx ts-node src/scripts/createAdmin.ts
+this way you create the admin in console. this is not implemented directly to the website to prevent others to be able to create accounts.
+
+Prerequisites: Ensure the backend is running and the admin dashboard is accessible.
+Steps:
+To access the admin dashboard just add /admin to the address bar. there is no button to access it for security reasons. 
+you'll end up in a log in page. Log in and you'll be redirected to admin dashboard.
+
+
+
+Uploading Files
+
+Prerequisites: Ensure the backend is running.
+Steps:
+Access the admin dashboard and navigate to the desired management section. The home and About page has default images and text. the resources is the main section to upload and delete files and lessons.
+
+

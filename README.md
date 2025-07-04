@@ -29,6 +29,7 @@ cd Website-for-AI-learning
 ### Install Frontend Dependencies
 
 Navigate to the root directory: `cd Website-for-AI-learning`
+then run:
  ```npm install```
 
 
@@ -37,6 +38,7 @@ Navigate to the root directory: `cd Website-for-AI-learning`
 ### Install Backend Dependencies
 
 Navigate to the backend directory: `cd backend`
+then run:
 ```npm install```
 
 

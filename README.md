@@ -8,7 +8,7 @@ This is a website built with React and TypeScript for the frontend, and an Expre
 Home :The home page for the website.
 About: The about page
 Contact: Where users can contact the admin/ website owners by email (need to edit backend .env)
-Resource Directory: Access a collection of learning materials (e.g., PDFs, videos) uploaded by admins.
+Resource : Access a collection of learning materials (e.g., PDFs, videos) uploaded by admins.
 Admin Dashboard: Manage files (partially implemented).
 Responsive Design: Works on desktop and mobile devices.
 

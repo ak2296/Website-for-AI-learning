@@ -92,7 +92,7 @@ export default function Home() {
               component="img"
               src={entry?.imagePath ? `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${entry.imagePath}` : "/Pics/AI-1.webp"}
               alt="AI and Technology Illustration"
-              onError={(e) => setHeroImageLoaded(false)} // Silent fallback
+              onError={() => setHeroImageLoaded(false)} // Silent fallback
               onLoad={() => setHeroImageLoaded(true)}
               sx={{
                 width: "100%",
@@ -180,7 +180,7 @@ export default function Home() {
               component="img"
               src="/Pics/Brain-1.png"
               alt="AI Brain"
-              onError={(e) => setBrainImageLoaded(false)} // Silent fallback
+              onError={() => setBrainImageLoaded(false)} // Silent fallback
               onLoad={() => setBrainImageLoaded(true)}
               sx={{
                 width: "10%",

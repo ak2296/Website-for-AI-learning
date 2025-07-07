@@ -54,7 +54,7 @@ const Dashboard: React.FC = () => {
 
   // Fetch all data from APIs when the component loads
   useEffect(() => {
-    fetchAllData().catch(err => {
+    fetchAllData().catch(() => {
       setError("Failed to load data. Check console for details.");
     });
   }, []);
@@ -64,9 +64,9 @@ const Dashboard: React.FC = () => {
     try {
       const apiUrl = import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:5000";
       const [resourcesResponse, homeResponse, aboutResponse] = await Promise.all([
-        axios.get(`${apiUrl}/api/resources`).catch(err => ({ status: 404, data: [] })),
-        axios.get(`${apiUrl}/api/home`).catch(err => ({ status: 404, data: [] })),
-        axios.get(`${apiUrl}/api/about`).catch(err => ({ status: 404, data: [] })),
+        axios.get(`${apiUrl}/api/resources`).catch(() => ({ status: 404, data: [] })),
+        axios.get(`${apiUrl}/api/home`).catch(() => ({ status: 404, data: [] })),
+        axios.get(`${apiUrl}/api/about`).catch(() => ({ status: 404, data: [] })),
       ]);
 
       const allFiles = [

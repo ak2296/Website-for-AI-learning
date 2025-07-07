@@ -55,7 +55,7 @@ In ```.env``` file in the backend directory: adjust as needed (There are comment
 
 ### Start the Backend Server
 
-From the backend directory: ```npx ts-node app.ts```
+From the backend directory: ```npx ts-node src/app.ts```
 
 
 The server should start on http://localhost:5000. Check the console for confirmation.

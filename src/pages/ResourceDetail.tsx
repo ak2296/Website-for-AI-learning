@@ -1,6 +1,6 @@
 // src/components/ResourceDetail.tsx
 import { useTranslation } from "react-i18next";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Typography, CircularProgress, Button, Box, Paper } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -51,7 +51,6 @@ export default function ResourceDetail() {
 
         // Fetch content for text files
         const fileName = fetchedResource.filePath.split(/[\\/]/).pop();
-        const mediaUrl = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${fileName}`;
         const extension = fileName?.split('.').pop()?.toLowerCase();
         if (extension === 'txt') {
           const content = await fetchFileContent(fetchedResource.filePath);

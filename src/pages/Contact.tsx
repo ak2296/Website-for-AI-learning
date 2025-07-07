@@ -1,7 +1,6 @@
 // src/components/Contact.tsx
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Container,
   Typography,
@@ -13,7 +12,6 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import SendIcon from "@mui/icons-material/Send";
-import { useTheme } from "@mui/material/styles";
 
 type FormData = {
   name: string;
@@ -24,8 +22,6 @@ type FormData = {
 // Contact form component for submitting inquiries
 export default function Contact() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const theme = useTheme();
   const [formData, setFormData] = useState<FormData>({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
